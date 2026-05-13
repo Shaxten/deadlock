@@ -3,19 +3,19 @@
   <section class="search-section">
     <div class="search-container">
       <h1 class="page-title">Player Stats</h1>
-      <p class="page-subtitle">Enter a Steam ID, SteamID64, or Steam profile URL to view Deadlock stats</p>
+      <p class="page-subtitle">Enter a Steam ID, SteamID64, Steam profile URL, or search by name</p>
 
       <div class="search-box">
         <input
           type="text"
           class="search-input"
           [(ngModel)]="searchInput"
-          placeholder="Steam ID, SteamID64, or profile URL..."
+          placeholder="Steam ID, profile URL, or player name..."
           (keyup.enter)="search()"
           aria-label="Steam ID input"
         />
-        <button class="search-btn" (click)="search()" [disabled]="loading()">
-          @if (loading()) {
+        <button class="search-btn" (click)="search()" [disabled]="loading() || searching()">
+          @if (loading() || searching()) {
             <span class="btn-spinner"></span>
           } @else {
             Search
@@ -24,6 +24,27 @@
       </div>
     </div>
   </section>
+
+  <!-- Search Results (multiple profiles) -->
+  @if (searchResults().length > 0) {
+    <section class="section section-results">
+      <div class="container">
+        <h3 class="section-title">Select a Player</h3>
+        <div class="results-list">
+          @for (result of searchResults(); track result.account_id) {
+            <button class="result-card" (click)="selectProfile(result)">
+              <img [src]="result.avatarmedium" [alt]="result.personaname" class="result-avatar" />
+              <div class="result-info">
+                <span class="result-name">{{ result.personaname }}</span>
+                <span class="result-id">ID: {{ result.account_id }}</span>
+              </div>
+              <span class="result-arrow">→</span>
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+  }
 
   <!-- Loading -->
   @if (loading()) {

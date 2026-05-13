@@ -7,7 +7,7 @@ import { PlayerService } from '../../services/player.service';
 import { HeroService } from '../../services/hero.service';
 import { SteamProfile, PlayerHeroStats, PlayerMatch, HeroInfo } from '../../models/hero.model';
 
-const STEAM_ID_64_BASE = 76561197960265728;
+const STEAM_ID_64_BASE = BigInt('76561197960265728');
 
 @Component({
   selector: 'app-player',
@@ -23,7 +23,9 @@ export class Player implements OnInit {
 
   searchInput = '';
   loading = signal(false);
+  searching = signal(false);
   error = signal<string | null>(null);
+  searchResults = signal<SteamProfile[]>([]);
   profile = signal<SteamProfile | null>(null);
   heroStats = signal<PlayerHeroStats[]>([]);
   matchHistory = signal<PlayerMatch[]>([]);
@@ -49,80 +51,81 @@ export class Player implements OnInit {
     }
   }
 
-  async search(): Promise<void> {
+  search(): void {
     const input = this.searchInput.trim();
     if (!input) return;
 
-    this.loading.set(true);
     this.error.set(null);
+    this.searchResults.set([]);
     this.profile.set(null);
     this.heroStats.set([]);
     this.matchHistory.set([]);
 
-    try {
-      const accountId = await this.resolveAccountId(input);
-      if (accountId === null) {
-        this.error.set('Could not resolve Steam ID. Please check your input.');
-        this.loading.set(false);
-        return;
-      }
-      this.loadPlayerData(accountId);
-    } catch {
-      this.error.set('Failed to resolve Steam ID.');
-      this.loading.set(false);
+    // Try to parse as a direct ID or profile URL first
+    const directId = this.parseDirectId(input);
+    if (directId !== null) {
+      this.loading.set(true);
+      this.loadPlayerData(directId);
+      return;
     }
+
+    // Otherwise search by name — show results list
+    this.searching.set(true);
+    const vanityMatch = input.match(/steamcommunity\.com\/id\/([^/?\s]+)/);
+    const query = vanityMatch ? vanityMatch[1] : input;
+
+    this.playerService.resolveVanityUrl(query).subscribe({
+      next: (results) => {
+        this.searching.set(false);
+        if (results && results.length > 0) {
+          this.searchResults.set(results);
+        } else {
+          this.error.set('No players found. Try a Steam ID or profile URL instead.');
+        }
+      },
+      error: () => {
+        this.searching.set(false);
+        this.error.set('Search failed. Try pasting a Steam profile URL or ID directly.');
+      }
+    });
   }
 
-  private resolveAccountId(input: string): Promise<number | null> {
-    // Check for steamcommunity.com/id/ vanity URL
-    const vanityMatch = input.match(/steamcommunity\.com\/id\/([^/?\s]+)/);
-    if (vanityMatch) {
-      return new Promise((resolve) => {
-        this.playerService.resolveVanityUrl(vanityMatch[1]).subscribe({
-          next: (results) => {
-            if (results && results.length > 0) {
-              resolve(results[0].account_id);
-            } else {
-              resolve(null);
-            }
-          },
-          error: () => resolve(null)
-        });
-      });
-    }
+  selectProfile(profile: SteamProfile): void {
+    this.searchResults.set([]);
+    this.loading.set(true);
+    this.loadPlayerData(profile.account_id);
+  }
 
-    // Check for steamcommunity.com/profiles/ URL
+  private parseDirectId(input: string): number | null {
+    // steamcommunity.com/profiles/STEAMID64
     const profileMatch = input.match(/steamcommunity\.com\/profiles\/(\d+)/);
     if (profileMatch) {
-      const steamId64 = parseInt(profileMatch[1], 10);
-      return Promise.resolve(steamId64 - STEAM_ID_64_BASE);
-    }
-
-    // Check if it's a number
-    const num = parseInt(input, 10);
-    if (!isNaN(num)) {
-      if (num >= STEAM_ID_64_BASE) {
-        // SteamID64
-        return Promise.resolve(num - STEAM_ID_64_BASE);
-      } else if (num < 1000000000) {
-        // SteamID3 account_id
-        return Promise.resolve(num);
+      try {
+        const steamId64 = BigInt(profileMatch[1]);
+        const accountId = Number(steamId64 - STEAM_ID_64_BASE);
+        if (accountId > 0) return accountId;
+      } catch {
+        return null;
       }
     }
 
-    // Try as vanity name directly
-    return new Promise((resolve) => {
-      this.playerService.resolveVanityUrl(input).subscribe({
-        next: (results) => {
-          if (results && results.length > 0) {
-            resolve(results[0].account_id);
-          } else {
-            resolve(null);
-          }
-        },
-        error: () => resolve(null)
-      });
-    });
+    // Pure number input
+    if (/^\d+$/.test(input)) {
+      try {
+        const num = BigInt(input);
+        if (num >= STEAM_ID_64_BASE) {
+          return Number(num - STEAM_ID_64_BASE);
+        }
+        const small = Number(num);
+        if (small > 0 && small < 2000000000) {
+          return small;
+        }
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
   }
 
   private loadPlayerData(accountId: number): void {
@@ -138,7 +141,7 @@ export class Player implements OnInit {
         this.loading.set(false);
 
         if (!profile?.length) {
-          this.error.set('Player not found.');
+          this.error.set('Player not found. They may not have played Deadlock.');
         }
       },
       error: () => {
