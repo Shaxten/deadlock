@@ -141,6 +141,7 @@
                 <span class="detail-result" [class.win]="selectedPlayerWon()" [class.loss]="!selectedPlayerWon()">
                   {{ selectedPlayerWon() ? 'VICTORY' : 'DEFEAT' }}
                 </span>
+                <a [routerLink]="['/player', sp.account_id]" class="detail-profile-link">View Full Stats →</a>
               </div>
             </div>
 

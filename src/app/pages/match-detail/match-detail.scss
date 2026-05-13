@@ -460,6 +460,20 @@
   }
 }
 
+.detail-profile-link {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity 0.2s;
+  margin-top: 0.25rem;
+
+  &:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
 .detail-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
