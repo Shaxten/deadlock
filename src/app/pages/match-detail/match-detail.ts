@@ -5,7 +5,7 @@ import { forkJoin } from 'rxjs';
 import { MatchService } from '../../services/match.service';
 import { HeroService } from '../../services/hero.service';
 import { PlayerService } from '../../services/player.service';
-import { MatchMetadata, MatchPlayer, HeroInfo, SteamProfile } from '../../models/hero.model';
+import { MatchMetadata, MatchPlayer, HeroInfo, SteamProfile, ItemInfo } from '../../models/hero.model';
 
 @Component({
   selector: 'app-match-detail',
@@ -24,6 +24,7 @@ export class MatchDetail implements OnInit {
   error = signal<string | null>(null);
   matchData = signal<MatchMetadata | null>(null);
   heroes = signal<HeroInfo[]>([]);
+  allItems = signal<Map<number, ItemInfo>>(new Map());
   playerProfiles = signal<Map<number, SteamProfile>>(new Map());
   selectedPlayer = signal<MatchPlayer | null>(null);
 
@@ -61,11 +62,17 @@ export class MatchDetail implements OnInit {
 
     forkJoin({
       match: this.matchService.getMatchMetadata(matchId),
-      heroes: this.heroService.getHeroes()
+      heroes: this.heroService.getHeroes(),
+      items: this.heroService.getItems()
     }).subscribe({
-      next: ({ match, heroes }) => {
+      next: ({ match, heroes, items }) => {
         this.matchData.set(match);
         this.heroes.set(heroes);
+
+        const itemMap = new Map<number, ItemInfo>();
+        items.forEach(i => itemMap.set(i.id, i));
+        this.allItems.set(itemMap);
+
         this.loading.set(false);
 
         // Fetch player names
@@ -148,5 +155,69 @@ export class MatchDetail implements OnInit {
     const p = this.selectedPlayer();
     if (!p) return false;
     return p.team === this.winningTeam();
+  }
+
+  // Get items still owned at end of match (not sold)
+  getPlayerItems(player: MatchPlayer): ItemInfo[] {
+    const itemMap = this.allItems();
+    return player.items_purchased
+      .filter(i => i.sold_time_s === 0 && i.item_id > 0)
+      .map(i => itemMap.get(i.item_id))
+      .filter((i): i is ItemInfo => !!i)
+      .slice(0, 10);
+  }
+
+  getItemSlotClass(item: ItemInfo): string {
+    if (item.item_slot_type === 'weapon') return 'slot-weapon';
+    if (item.item_slot_type === 'spirit') return 'slot-spirit';
+    if (item.item_slot_type === 'vitality') return 'slot-vitality';
+    return '';
+  }
+
+  // Death timing analysis
+  getDeathAnalysis(player: MatchPlayer): { time: string; period: string; isClustered: boolean }[] {
+    return player.death_times.map((t, i, arr) => {
+      const mins = Math.floor(t / 60);
+      const secs = t % 60;
+      const time = `${mins}:${secs.toString().padStart(2, '0')}`;
+      let period = 'Mid Game';
+      if (t < 600) period = 'Early Game';
+      else if (t > 1500) period = 'Late Game';
+
+      // Check if deaths are clustered (within 120s of another death)
+      const isClustered = arr.some((other, j) => j !== i && Math.abs(other - t) < 120);
+      return { time, period, isClustered };
+    });
+  }
+
+  // Soul progression analysis - find weak periods
+  getSoulAnalysis(player: MatchPlayer): { period: string; soulsPerMin: number; barWidth: number; isWeak: boolean }[] {
+    const timeline = player.stats_timeline;
+    if (timeline.length < 2) return [];
+
+    const segments: { period: string; soulsPerMin: number; barWidth: number; isWeak: boolean }[] = [];
+    for (let i = 1; i < timeline.length; i++) {
+      const prev = timeline[i - 1];
+      const curr = timeline[i];
+      const timeDiffMin = (curr.time_stamp_s - prev.time_stamp_s) / 60;
+      const soulGain = curr.net_worth - prev.net_worth;
+      const soulsPerMin = timeDiffMin > 0 ? soulGain / timeDiffMin : 0;
+
+      const startMin = Math.floor(prev.time_stamp_s / 60);
+      const endMin = Math.floor(curr.time_stamp_s / 60);
+      const period = `${startMin}:00 - ${endMin}:00`;
+
+      segments.push({ period, soulsPerMin, barWidth: 0, isWeak: false });
+    }
+
+    // Calculate average and flag weak periods
+    const avgSpm = segments.reduce((s, seg) => s + seg.soulsPerMin, 0) / segments.length;
+    const maxSpm = Math.max(...segments.map(s => s.soulsPerMin), 1);
+    segments.forEach(seg => {
+      seg.isWeak = seg.soulsPerMin < avgSpm * 0.6;
+      seg.barWidth = Math.min((seg.soulsPerMin / maxSpm) * 100, 100);
+    });
+
+    return segments;
   }
 }

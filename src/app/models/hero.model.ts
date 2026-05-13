@@ -195,4 +195,21 @@ export interface MatchPlayer {
   player_damage: number;
   player_healing: number;
   damage_taken: number;
+  stats_timeline: PlayerStatSnapshot[];
+  items_purchased: PlayerItemPurchase[];
+  death_times: number[];
+}
+
+export interface PlayerStatSnapshot {
+  time_stamp_s: number;
+  net_worth: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+}
+
+export interface PlayerItemPurchase {
+  game_time_s: number;
+  item_id: number;
+  sold_time_s: number;
 }

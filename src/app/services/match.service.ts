@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { MatchMetadata, MatchPlayer } from '../models/hero.model';
+import { MatchMetadata, MatchPlayer, PlayerStatSnapshot, PlayerItemPurchase } from '../models/hero.model';
 
 @Injectable({ providedIn: 'root' })
 export class MatchService {
@@ -16,13 +16,29 @@ export class MatchService {
 
   private normalizeMetadata(raw: any): MatchMetadata {
     const matchInfo = raw.match_info || {};
-
-    // Players are inside match_info.players
     const rawPlayers: any[] = matchInfo.players || raw.players || [];
 
     const players: MatchPlayer[] = rawPlayers.map((p: any) => {
-      // Get final stats from the last entry in the stats array
       const finalStats = p.stats?.length ? p.stats[p.stats.length - 1] : {};
+
+      // Extract stats timeline
+      const statsTimeline: PlayerStatSnapshot[] = (p.stats || []).map((s: any) => ({
+        time_stamp_s: s.time_stamp_s || 0,
+        net_worth: s.net_worth || 0,
+        kills: s.kills || 0,
+        deaths: s.deaths || 0,
+        assists: s.assists || 0
+      }));
+
+      // Extract items (only non-sold items or all purchased)
+      const itemsPurchased: PlayerItemPurchase[] = (p.items || []).map((i: any) => ({
+        game_time_s: i.game_time_s || 0,
+        item_id: i.item_id || 0,
+        sold_time_s: i.sold_time_s || 0
+      }));
+
+      // Extract death times from death_details
+      const deathTimes: number[] = (p.death_details || []).map((d: any) => d.game_time_s || 0);
 
       return {
         account_id: p.account_id || 0,
@@ -44,7 +60,10 @@ export class MatchService {
         assigned_lane: p.assigned_lane ?? 0,
         player_damage: finalStats.player_damage ?? 0,
         player_healing: finalStats.player_healing ?? 0,
-        damage_taken: finalStats.player_damage_taken ?? 0
+        damage_taken: finalStats.player_damage_taken ?? 0,
+        stats_timeline: statsTimeline,
+        items_purchased: itemsPurchased,
+        death_times: deathTimes
       };
     });
 

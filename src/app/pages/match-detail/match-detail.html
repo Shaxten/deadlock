@@ -145,56 +145,95 @@
               </div>
             </div>
 
-            <div class="detail-stats-grid">
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.kills }}</span>
-                <span class="detail-stat-label">Kills</span>
+            <!-- Stats + Items side by side -->
+            <div class="detail-columns">
+              <div class="detail-stats-grid">
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.kills }}</span>
+                  <span class="detail-stat-label">Kills</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.deaths }}</span>
+                  <span class="detail-stat-label">Deaths</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.assists }}</span>
+                  <span class="detail-stat-label">Assists</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.net_worth | number }}</span>
+                  <span class="detail-stat-label">Net Worth</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.player_damage | number }}</span>
+                  <span class="detail-stat-label">Damage</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.damage_taken | number }}</span>
+                  <span class="detail-stat-label">Taken</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.player_healing | number }}</span>
+                  <span class="detail-stat-label">Healing</span>
+                </div>
+                <div class="detail-stat">
+                  <span class="detail-stat-value">{{ sp.last_hits }}/{{ sp.denies }}</span>
+                  <span class="detail-stat-label">LH/DN</span>
+                </div>
               </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.deaths }}</span>
-                <span class="detail-stat-label">Deaths</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.assists }}</span>
-                <span class="detail-stat-label">Assists</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.net_worth | number }}</span>
-                <span class="detail-stat-label">Net Worth</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.last_hits }}</span>
-                <span class="detail-stat-label">Last Hits</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.denies }}</span>
-                <span class="detail-stat-label">Denies</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.player_damage | number }}</span>
-                <span class="detail-stat-label">Player Damage</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.damage_taken | number }}</span>
-                <span class="detail-stat-label">Damage Taken</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.player_healing | number }}</span>
-                <span class="detail-stat-label">Healing</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.gold_player | number }}</span>
-                <span class="detail-stat-label">Player Gold</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.gold_boss | number }}</span>
-                <span class="detail-stat-label">Boss Gold</span>
-              </div>
-              <div class="detail-stat">
-                <span class="detail-stat-value">{{ sp.assigned_lane }}</span>
-                <span class="detail-stat-label">Lane</span>
+
+              <!-- Items Grid 5x2 -->
+              <div class="detail-items-section">
+                <h4 class="detail-sub-title">Items</h4>
+                <div class="detail-items-grid">
+                  @for (item of getPlayerItems(sp); track item.id) {
+                    <div class="detail-item" [class]="getItemSlotClass(item)">
+                      <img [src]="item.image_webp || item.image" [alt]="item.name" />
+                      <span class="detail-item-name">{{ item.name }}</span>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
+
+            <!-- Death Timing -->
+            @if (sp.death_times.length > 0) {
+              <div class="detail-analysis">
+                <h4 class="detail-sub-title">Death Timeline</h4>
+                <div class="death-timeline">
+                  @for (death of getDeathAnalysis(sp); track $index) {
+                    <div class="death-entry" [class.clustered]="death.isClustered">
+                      <span class="death-time">{{ death.time }}</span>
+                      <span class="death-period">{{ death.period }}</span>
+                      @if (death.isClustered) {
+                        <span class="death-flag">Clustered</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Soul Progression -->
+            @if (getSoulAnalysis(sp).length > 0) {
+              <div class="detail-analysis">
+                <h4 class="detail-sub-title">Soul Gain by Period</h4>
+                <div class="soul-timeline">
+                  @for (seg of getSoulAnalysis(sp); track seg.period) {
+                    <div class="soul-entry" [class.weak]="seg.isWeak">
+                      <span class="soul-period">{{ seg.period }}</span>
+                      <div class="soul-bar-wrapper">
+                        <div class="soul-bar" [style.width.%]="seg.barWidth"></div>
+                      </div>
+                      <span class="soul-value">{{ seg.soulsPerMin | number:'1.0-0' }} spm</span>
+                      @if (seg.isWeak) {
+                        <span class="soul-flag">Low</span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
           </div>
         </div>
       </section>
