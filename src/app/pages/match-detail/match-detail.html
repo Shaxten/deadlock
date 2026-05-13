@@ -16,7 +16,7 @@
   @if (matchData(); as match) {
     <section class="match-header">
       <div class="match-header-content">
-        <a routerLink="/player" class="back-link">← Back</a>
+        <a [routerLink]="sourcePlayerId() ? '/player/' + sourcePlayerId() : '/player'" class="back-link">← Back to Player</a>
         <h1 class="match-title">Match Details</h1>
         <div class="match-info-bar">
           <span class="match-duration">

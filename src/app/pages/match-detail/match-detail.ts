@@ -28,6 +28,7 @@ export class MatchDetail implements OnInit {
   playerProfiles = signal<Map<number, SteamProfile>>(new Map());
   selectedPlayer = signal<MatchPlayer | null>(null);
   performanceCurve = signal<PerformanceCurvePoint[]>([]);
+  sourcePlayerId = signal<string | null>(null);
 
   heroMap = computed(() => {
     const map = new Map<number, HeroInfo>();
@@ -54,6 +55,7 @@ export class MatchDetail implements OnInit {
   ngOnInit(): void {
     const matchId = Number(this.route.snapshot.paramMap.get('id'));
     const playerParam = this.route.snapshot.queryParamMap.get('player');
+    this.sourcePlayerId.set(playerParam);
 
     if (!matchId || isNaN(matchId)) {
       this.error.set('Invalid match ID.');
