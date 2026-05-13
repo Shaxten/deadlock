@@ -15,35 +15,47 @@ export class MatchService {
   }
 
   private normalizeMetadata(raw: any): MatchMetadata {
-    // The API may return players at different levels depending on version
-    let players: MatchPlayer[] = [];
+    const matchInfo = raw.match_info || {};
 
-    if (Array.isArray(raw.players)) {
-      players = raw.players;
-    } else if (raw.match_players && Array.isArray(raw.match_players)) {
-      players = raw.match_players;
-    } else {
-      // Try to find players in nested structures
-      // Some responses have teams[0].players and teams[1].players
-      if (raw.teams && Array.isArray(raw.teams)) {
-        for (const team of raw.teams) {
-          if (team.players && Array.isArray(team.players)) {
-            players.push(...team.players.map((p: any) => ({ ...p, team: team.team_id ?? team.team ?? 0 })));
-          }
-        }
-      }
-    }
+    // Players are inside match_info.players
+    const rawPlayers: any[] = matchInfo.players || raw.players || [];
 
-    const matchInfo = raw.match_info || {
-      duration_s: raw.duration_s || raw.match_duration_s || 0,
-      match_mode: raw.match_mode || 0,
-      game_mode: raw.game_mode || 0,
-      start_time: raw.start_time || 0,
-      winning_team: raw.winning_team ?? raw.match_info?.winning_team ?? -1
-    };
+    const players: MatchPlayer[] = rawPlayers.map((p: any) => {
+      // Get final stats from the last entry in the stats array
+      const finalStats = p.stats?.length ? p.stats[p.stats.length - 1] : {};
+
+      return {
+        account_id: p.account_id || 0,
+        player_slot: p.player_slot || 0,
+        team: p.team ?? 0,
+        hero_id: p.hero_id || 0,
+        kills: p.kills ?? finalStats.kills ?? 0,
+        deaths: p.deaths ?? finalStats.deaths ?? 0,
+        assists: p.assists ?? finalStats.assists ?? 0,
+        net_worth: p.net_worth ?? finalStats.net_worth ?? 0,
+        last_hits: p.last_hits ?? finalStats.creep_kills ?? 0,
+        denies: p.denies ?? finalStats.denies ?? 0,
+        player_level: p.level ?? finalStats.level ?? 0,
+        gold_player: finalStats.gold_player ?? 0,
+        gold_player_orbs: finalStats.gold_player_orbs ?? 0,
+        gold_lane_creep_orbs: finalStats.gold_lane_creep_orbs ?? 0,
+        gold_neutral_creep_orbs: finalStats.gold_neutral_creep_orbs ?? 0,
+        gold_boss: finalStats.gold_boss ?? 0,
+        assigned_lane: p.assigned_lane ?? 0,
+        player_damage: finalStats.player_damage ?? 0,
+        player_healing: finalStats.player_healing ?? 0,
+        damage_taken: finalStats.player_damage_taken ?? 0
+      };
+    });
 
     return {
-      match_info: matchInfo,
+      match_info: {
+        duration_s: matchInfo.duration_s || 0,
+        match_mode: matchInfo.match_mode || 0,
+        game_mode: matchInfo.game_mode || 0,
+        start_time: matchInfo.start_time || 0,
+        winning_team: matchInfo.winning_team ?? -1
+      },
       players
     };
   }
