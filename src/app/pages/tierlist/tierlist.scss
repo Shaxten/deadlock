@@ -171,16 +171,16 @@
 .tiers-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .tier-row {
   display: flex;
   background: var(--color-surface);
   border-radius: 12px;
-  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.05);
   animation: tierSlideIn 0.5s ease-out both;
+  position: relative;
 
   @for $i from 1 through 5 {
     &:nth-child(#{$i}) {
@@ -200,6 +200,7 @@
   justify-content: center;
   min-width: 70px;
   padding: 1rem;
+  border-radius: 12px 0 0 12px;
 
   span {
     font-family: var(--font-display);
@@ -215,6 +216,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0.75rem;
+  padding-top: 1rem;
   flex: 1;
   align-items: center;
 }
@@ -230,10 +232,12 @@
   border-radius: 8px;
   transition: transform 0.3s, background 0.3s;
   cursor: default;
+  z-index: 1;
 
   &:hover {
     transform: translateY(-4px);
     background: rgba(255, 255, 255, 0.05);
+    z-index: 200;
 
     .hero-tooltip {
       opacity: 1;
@@ -343,6 +347,7 @@
   .tier-label {
     min-width: unset;
     padding: 0.75rem;
+    border-radius: 12px 12px 0 0;
   }
 
   .tier-heroes {
