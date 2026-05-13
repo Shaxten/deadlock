@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { MatchMetadata, MatchPlayer, PlayerStatSnapshot, PlayerItemPurchase } from '../models/hero.model';
+import { MatchMetadata, MatchPlayer, PlayerStatSnapshot, PlayerItemPurchase, DeathDetail } from '../models/hero.model';
 
 export interface PerformanceCurvePoint {
   game_time: number;
@@ -52,8 +52,11 @@ export class MatchService {
         sold_time_s: i.sold_time_s || 0
       }));
 
-      // Extract death times from death_details
-      const deathTimes: number[] = (p.death_details || []).map((d: any) => d.game_time_s || 0);
+      // Extract death details with killer info
+      const deathDetails: DeathDetail[] = (p.death_details || []).map((d: any) => ({
+        game_time_s: d.game_time_s || 0,
+        killer_player_slot: d.killer_player_slot ?? -1
+      }));
 
       return {
         account_id: p.account_id || 0,
@@ -78,7 +81,7 @@ export class MatchService {
         damage_taken: finalStats.player_damage_taken ?? 0,
         stats_timeline: statsTimeline,
         items_purchased: itemsPurchased,
-        death_times: deathTimes
+        death_details: deathDetails
       };
     });
 

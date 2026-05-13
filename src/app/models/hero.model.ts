@@ -201,7 +201,12 @@ export interface MatchPlayer {
   damage_taken: number;
   stats_timeline: PlayerStatSnapshot[];
   items_purchased: PlayerItemPurchase[];
-  death_times: number[];
+  death_details: DeathDetail[];
+}
+
+export interface DeathDetail {
+  game_time_s: number;
+  killer_player_slot: number;
 }
 
 export interface PlayerStatSnapshot {

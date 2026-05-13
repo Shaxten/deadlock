@@ -202,16 +202,22 @@
             </div>
 
             <!-- Death Timing -->
-            @if (sp.death_times.length > 0) {
+            @if (sp.death_details.length > 0) {
               <div class="detail-analysis">
                 <div class="analysis-header">
                   <h4 class="detail-sub-title">Death Timeline</h4>
-                  <span class="analysis-desc">Clustered deaths (within 2 min of each other) may indicate tilting, overextending, or being repeatedly targeted.</span>
+                  <span class="analysis-desc">Clustered deaths (within 2 min of each other) may indicate tilting, overextending, or being repeatedly targeted. Hover to see killer.</span>
                 </div>
                 <div class="death-timeline">
                   @for (death of getDeathAnalysis(sp); track $index) {
                     <div class="death-entry" [class.clustered]="death.isClustered">
                       <span class="death-time">{{ death.time }}</span>
+                      @if (death.killerHeroId && getHeroImage(death.killerHeroId)) {
+                        <div class="death-killer">
+                          <img [src]="getHeroImage(death.killerHeroId)" [alt]="getHeroName(death.killerHeroId)" class="killer-icon" />
+                          <span class="killer-tooltip">Killed by {{ getHeroName(death.killerHeroId) }}</span>
+                        </div>
+                      }
                       <span class="death-period">{{ death.period }}</span>
                       @if (death.isClustered) {
                         <span class="death-flag">Clustered</span>

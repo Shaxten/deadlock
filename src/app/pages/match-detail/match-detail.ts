@@ -194,8 +194,13 @@ export class MatchDetail implements OnInit {
   }
 
   // Death timing analysis
-  getDeathAnalysis(player: MatchPlayer): { time: string; period: string; isClustered: boolean }[] {
-    return player.death_times.map((t, i, arr) => {
+  getDeathAnalysis(player: MatchPlayer): { time: string; period: string; isClustered: boolean; killerHeroId: number }[] {
+    const allPlayers = this.matchData()?.players || [];
+    const slotToHero = new Map<number, number>();
+    allPlayers.forEach(p => slotToHero.set(p.player_slot, p.hero_id));
+
+    return player.death_details.map((d, i, arr) => {
+      const t = d.game_time_s;
       const mins = Math.floor(t / 60);
       const secs = t % 60;
       const time = `${mins}:${secs.toString().padStart(2, '0')}`;
@@ -203,9 +208,10 @@ export class MatchDetail implements OnInit {
       if (t < 600) period = 'Early Game';
       else if (t > 1500) period = 'Late Game';
 
-      // Check if deaths are clustered (within 120s of another death)
-      const isClustered = arr.some((other, j) => j !== i && Math.abs(other - t) < 120);
-      return { time, period, isClustered };
+      const isClustered = arr.some((other, j) => j !== i && Math.abs(other.game_time_s - t) < 120);
+      const killerHeroId = slotToHero.get(d.killer_player_slot) || 0;
+
+      return { time, period, isClustered, killerHeroId };
     });
   }
 
