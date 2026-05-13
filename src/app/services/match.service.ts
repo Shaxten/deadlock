@@ -3,10 +3,25 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { MatchMetadata, MatchPlayer, PlayerStatSnapshot, PlayerItemPurchase } from '../models/hero.model';
 
+export interface PerformanceCurvePoint {
+  game_time: number;
+  net_worth_avg: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MatchService {
   private http = inject(HttpClient);
   private apiUrl = 'https://api.deadlock-api.com/v1';
+
+  getPerformanceCurve(heroId: number, minBadge?: number, maxBadge?: number): Observable<PerformanceCurvePoint[]> {
+    const params: any = {
+      hero_ids: heroId.toString(),
+      resolution: '0'
+    };
+    if (minBadge !== undefined) params.min_average_badge = minBadge.toString();
+    if (maxBadge !== undefined) params.max_average_badge = maxBadge.toString();
+    return this.http.get<PerformanceCurvePoint[]>(`${this.apiUrl}/analytics/player-performance-curve`, { params });
+  }
 
   getMatchMetadata(matchId: number): Observable<MatchMetadata> {
     return this.http.get<any>(`${this.apiUrl}/matches/${matchId}/metadata`).pipe(
@@ -73,7 +88,9 @@ export class MatchService {
         match_mode: matchInfo.match_mode || 0,
         game_mode: matchInfo.game_mode || 0,
         start_time: matchInfo.start_time || 0,
-        winning_team: matchInfo.winning_team ?? -1
+        winning_team: matchInfo.winning_team ?? -1,
+        average_badge_team0: matchInfo.average_badge_team0,
+        average_badge_team1: matchInfo.average_badge_team1
       },
       players
     };

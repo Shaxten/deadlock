@@ -172,6 +172,8 @@ export interface MatchMetadata {
     game_mode: number;
     start_time: number;
     winning_team: number;
+    average_badge_team0?: number;
+    average_badge_team1?: number;
   };
   players: MatchPlayer[];
 }

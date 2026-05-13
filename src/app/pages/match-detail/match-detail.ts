@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
-import { MatchService } from '../../services/match.service';
+import { MatchService, PerformanceCurvePoint } from '../../services/match.service';
 import { HeroService } from '../../services/hero.service';
 import { PlayerService } from '../../services/player.service';
 import { MatchMetadata, MatchPlayer, HeroInfo, SteamProfile, ItemInfo } from '../../models/hero.model';
@@ -27,6 +27,7 @@ export class MatchDetail implements OnInit {
   allItems = signal<Map<number, ItemInfo>>(new Map());
   playerProfiles = signal<Map<number, SteamProfile>>(new Map());
   selectedPlayer = signal<MatchPlayer | null>(null);
+  performanceCurve = signal<PerformanceCurvePoint[]>([]);
 
   heroMap = computed(() => {
     const map = new Map<number, HeroInfo>();
@@ -94,7 +95,7 @@ export class MatchDetail implements OnInit {
         if (playerParam) {
           const pid = Number(playerParam);
           const found = match.players.find(p => p.account_id === pid);
-          if (found) this.selectedPlayer.set(found);
+          if (found) this.selectPlayer(found);
         }
       },
       error: () => {
@@ -106,6 +107,20 @@ export class MatchDetail implements OnInit {
 
   selectPlayer(player: MatchPlayer): void {
     this.selectedPlayer.set(player);
+    this.performanceCurve.set([]);
+
+    // Fetch average performance curve for this hero at the match's rank
+    const matchInfo = this.matchData()?.match_info;
+    const badge0 = matchInfo?.average_badge_team0 ?? 50;
+    const badge1 = matchInfo?.average_badge_team1 ?? 50;
+    const avgBadge = Math.round((badge0 + badge1) / 2);
+    const minBadge = Math.max(avgBadge - 5, 0);
+    const maxBadge = Math.min(avgBadge + 5, 116);
+
+    this.matchService.getPerformanceCurve(player.hero_id, minBadge, maxBadge).subscribe({
+      next: (curve) => this.performanceCurve.set(curve),
+      error: () => {} // Silently fail, graph will use linear fallback
+    });
   }
 
   getPlayerName(accountId: number): string {
@@ -230,14 +245,24 @@ export class MatchDetail implements OnInit {
     const timeline = player.stats_timeline;
     if (timeline.length < 2) return { points: [], maxSouls: 0, maxTime: 0 };
 
+    const curve = this.performanceCurve();
     const firstTime = timeline[0].time_stamp_s;
     const lastTime = timeline[timeline.length - 1].time_stamp_s;
     const lastNw = timeline[timeline.length - 1].net_worth;
     const totalDuration = lastTime - firstTime;
 
     const points = timeline.map(s => {
-      const elapsed = s.time_stamp_s - firstTime;
-      const expected = totalDuration > 0 ? (elapsed / totalDuration) * lastNw : 0;
+      let expected: number;
+
+      if (curve.length >= 2) {
+        // Use real performance curve data (average for this hero at this rank)
+        expected = this.interpolateCurve(curve, s.time_stamp_s);
+      } else {
+        // Fallback: linear interpolation
+        const elapsed = s.time_stamp_s - firstTime;
+        expected = totalDuration > 0 ? (elapsed / totalDuration) * lastNw : 0;
+      }
+
       return {
         time: s.time_stamp_s,
         actual: s.net_worth,
@@ -249,6 +274,21 @@ export class MatchDetail implements OnInit {
     const maxTime = lastTime;
 
     return { points, maxSouls, maxTime };
+  }
+
+  private interpolateCurve(curve: PerformanceCurvePoint[], time: number): number {
+    if (time <= curve[0].game_time) return curve[0].net_worth_avg;
+    if (time >= curve[curve.length - 1].game_time) return curve[curve.length - 1].net_worth_avg;
+
+    for (let i = 1; i < curve.length; i++) {
+      if (curve[i].game_time >= time) {
+        const prev = curve[i - 1];
+        const curr = curve[i];
+        const ratio = (time - prev.game_time) / (curr.game_time - prev.game_time);
+        return prev.net_worth_avg + ratio * (curr.net_worth_avg - prev.net_worth_avg);
+      }
+    }
+    return curve[curve.length - 1].net_worth_avg;
   }
 
   getSoulGraphPath(player: MatchPlayer, type: 'actual' | 'expected'): string {
