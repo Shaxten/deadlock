@@ -70,6 +70,11 @@
                   <span class="player-damage">{{ player.player_damage | number }}</span>
                   <span class="player-stat-label">Damage</span>
                 </div>
+                <div class="player-items-mini hide-mobile">
+                  @for (item of getPlayerItems(player); track item.id) {
+                    <img [src]="item.image_webp || item.image" [alt]="item.name" class="mini-item-img" [class]="getItemSlotClass(item)" />
+                  }
+                </div>
               </div>
             }
           </div>
@@ -111,6 +116,11 @@
                   <span class="player-damage">{{ player.player_damage | number }}</span>
                   <span class="player-stat-label">Damage</span>
                 </div>
+                <div class="player-items-mini hide-mobile">
+                  @for (item of getPlayerItems(player); track item.id) {
+                    <img [src]="item.image_webp || item.image" [alt]="item.name" class="mini-item-img" [class]="getItemSlotClass(item)" />
+                  }
+                </div>
               </div>
             }
           </div>
@@ -143,56 +153,51 @@
                 </span>
                 <a [routerLink]="['/player', sp.account_id]" class="detail-profile-link">View Full Stats →</a>
               </div>
-            </div>
-
-            <!-- Stats + Items side by side -->
-            <div class="detail-columns">
-              <div class="detail-stats-grid">
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.kills }}</span>
-                  <span class="detail-stat-label">Kills</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.deaths }}</span>
-                  <span class="detail-stat-label">Deaths</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.assists }}</span>
-                  <span class="detail-stat-label">Assists</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.net_worth | number }}</span>
-                  <span class="detail-stat-label">Net Worth</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.player_damage | number }}</span>
-                  <span class="detail-stat-label">Damage</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.damage_taken | number }}</span>
-                  <span class="detail-stat-label">Taken</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.player_healing | number }}</span>
-                  <span class="detail-stat-label">Healing</span>
-                </div>
-                <div class="detail-stat">
-                  <span class="detail-stat-value">{{ sp.last_hits }}/{{ sp.denies }}</span>
-                  <span class="detail-stat-label">LH/DN</span>
-                </div>
-              </div>
-
-              <!-- Items Grid 5x2 -->
-              <div class="detail-items-section">
-                <h4 class="detail-sub-title">Items</h4>
+              <!-- Items next to name -->
+              <div class="detail-header-items">
                 <div class="detail-items-grid">
                   @for (item of getPlayerItems(sp); track item.id) {
                     <div class="detail-item" [class]="getItemSlotClass(item)">
                       <img [src]="item.image_webp || item.image" [alt]="item.name" />
-                      <span class="detail-item-name">{{ item.name }}</span>
                     </div>
                   }
                 </div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="detail-stats-grid">
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.kills }}</span>
+                <span class="detail-stat-label">Kills</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.deaths }}</span>
+                <span class="detail-stat-label">Deaths</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.assists }}</span>
+                <span class="detail-stat-label">Assists</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.net_worth | number }}</span>
+                <span class="detail-stat-label">Net Worth</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.player_damage | number }}</span>
+                <span class="detail-stat-label">Damage</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.damage_taken | number }}</span>
+                <span class="detail-stat-label">Taken</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.player_healing | number }}</span>
+                <span class="detail-stat-label">Healing</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.last_hits }}/{{ sp.denies }}</span>
+                <span class="detail-stat-label">LH/DN</span>
               </div>
             </div>
 

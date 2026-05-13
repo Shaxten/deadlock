@@ -393,6 +393,57 @@
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+}
+
+.detail-header-items {
+  margin-left: auto;
+
+  .detail-items-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 0.4rem;
+  }
+
+  .detail-item {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .detail-item-name {
+      display: none;
+    }
+  }
+}
+
+// Mini items in team player rows
+.player-items-mini {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.mini-item-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  &.slot-weapon { border-color: rgba(245, 158, 11, 0.5); }
+  &.slot-spirit { border-color: rgba(168, 85, 247, 0.5); }
+  &.slot-vitality { border-color: rgba(34, 197, 94, 0.5); }
 }
 
 .detail-avatar {
@@ -510,18 +561,7 @@
   letter-spacing: 1px;
 }
 
-// Detail columns layout (stats + items side by side)
-.detail-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
+// Detail stats
 .detail-sub-title {
   font-family: var(--font-display);
   font-size: 0.85rem;
