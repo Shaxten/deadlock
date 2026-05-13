@@ -53,3 +53,22 @@ export interface Tier {
   color: string;
   heroes: TierHero[];
 }
+
+export interface RankInfo {
+  tier: number;
+  name: string;
+  images: {
+    small_webp?: string;
+    small?: string;
+    large_webp?: string;
+    large?: string;
+    [key: string]: string | undefined;
+  };
+  color: string;
+}
+
+export interface RankFilter {
+  label: string;
+  minBadge: number;
+  maxBadge: number;
+}

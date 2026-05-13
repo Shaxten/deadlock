@@ -1,16 +1,39 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
-import { HeroStats, HeroInfo, TierHero, Tier } from '../models/hero.model';
+import { HeroStats, HeroInfo, TierHero, Tier, RankInfo, RankFilter } from '../models/hero.model';
 
 @Injectable({ providedIn: 'root' })
 export class HeroService {
   private http = inject(HttpClient);
   private statsUrl = 'https://api.deadlock-api.com/v1/analytics/hero-stats';
   private assetsUrl = 'https://assets.deadlock-api.com/v2/heroes';
+  private ranksUrl = 'https://assets.deadlock-api.com/v2/ranks';
 
-  getHeroStats(): Observable<HeroStats[]> {
-    return this.http.get<HeroStats[]>(this.statsUrl);
+  readonly rankFilters: RankFilter[] = [
+    { label: 'Tous', minBadge: 0, maxBadge: 116 },
+    { label: 'Initiate', minBadge: 10, maxBadge: 16 },
+    { label: 'Seeker', minBadge: 20, maxBadge: 26 },
+    { label: 'Alchemist', minBadge: 30, maxBadge: 36 },
+    { label: 'Arcanist', minBadge: 40, maxBadge: 46 },
+    { label: 'Ritualist', minBadge: 50, maxBadge: 56 },
+    { label: 'Emissary', minBadge: 60, maxBadge: 66 },
+    { label: 'Archon', minBadge: 70, maxBadge: 76 },
+    { label: 'Oracle', minBadge: 80, maxBadge: 86 },
+    { label: 'Phantom', minBadge: 90, maxBadge: 96 },
+    { label: 'Ascendant', minBadge: 100, maxBadge: 106 },
+    { label: 'Eternus', minBadge: 110, maxBadge: 116 }
+  ];
+
+  getHeroStats(minBadge?: number, maxBadge?: number): Observable<HeroStats[]> {
+    let params = new HttpParams();
+    if (minBadge !== undefined && minBadge > 0) {
+      params = params.set('min_average_badge', minBadge.toString());
+    }
+    if (maxBadge !== undefined && maxBadge < 116) {
+      params = params.set('max_average_badge', maxBadge.toString());
+    }
+    return this.http.get<HeroStats[]>(this.statsUrl, { params });
   }
 
   getHeroes(): Observable<HeroInfo[]> {
@@ -19,8 +42,12 @@ export class HeroService {
     });
   }
 
-  getTierList(): Observable<Tier[]> {
-    return forkJoin([this.getHeroStats(), this.getHeroes()]).pipe(
+  getRanks(): Observable<RankInfo[]> {
+    return this.http.get<RankInfo[]>(this.ranksUrl);
+  }
+
+  getTierList(minBadge?: number, maxBadge?: number): Observable<Tier[]> {
+    return forkJoin([this.getHeroStats(minBadge, maxBadge), this.getHeroes()]).pipe(
       map(([stats, heroes]) => this.buildTierList(stats, heroes))
     );
   }

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeroService } from '../../services/hero.service';
-import { Tier, TierHero } from '../../models/hero.model';
+import { Tier, TierHero, RankFilter } from '../../models/hero.model';
 
 @Component({
   selector: 'app-tierlist',
@@ -16,8 +16,25 @@ export class Tierlist implements OnInit {
   loading = true;
   error = '';
 
+  rankFilters: RankFilter[] = this.heroService.rankFilters;
+  selectedRank: RankFilter = this.rankFilters[0];
+
   ngOnInit(): void {
-    this.heroService.getTierList().subscribe({
+    this.loadTierList();
+  }
+
+  selectRank(rank: RankFilter): void {
+    this.selectedRank = rank;
+    this.loading = true;
+    this.error = '';
+    this.loadTierList();
+  }
+
+  private loadTierList(): void {
+    const min = this.selectedRank.minBadge === 0 ? undefined : this.selectedRank.minBadge;
+    const max = this.selectedRank.maxBadge === 116 && this.selectedRank.minBadge === 0 ? undefined : this.selectedRank.maxBadge;
+
+    this.heroService.getTierList(min, max).subscribe({
       next: (tiers) => {
         this.tiers = tiers;
         this.loading = false;

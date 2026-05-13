@@ -16,6 +16,21 @@
 
 <section class="section section-tierlist">
   <div class="container">
+    <!-- Rank Filter -->
+    <div class="rank-filter">
+      <span class="filter-label">Filtrer par rang :</span>
+      <div class="rank-buttons">
+        @for (rank of rankFilters; track rank.label) {
+          <button
+            class="rank-btn"
+            [class.active]="selectedRank.label === rank.label"
+            (click)="selectRank(rank)">
+            {{ rank.label }}
+          </button>
+        }
+      </div>
+    </div>
+
     @if (loading) {
       <div class="loading">
         <div class="spinner"></div>
