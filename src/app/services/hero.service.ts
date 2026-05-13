@@ -11,7 +11,7 @@ export class HeroService {
   private ranksUrl = 'https://assets.deadlock-api.com/v2/ranks';
 
   readonly rankFilters: RankFilter[] = [
-    { label: 'Tous', minBadge: 0, maxBadge: 116 },
+    { label: 'All', minBadge: 0, maxBadge: 116 },
     { label: 'Initiate', minBadge: 10, maxBadge: 16 },
     { label: 'Seeker', minBadge: 20, maxBadge: 26 },
     { label: 'Alchemist', minBadge: 30, maxBadge: 36 },

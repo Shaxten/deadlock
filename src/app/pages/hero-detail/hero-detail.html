@@ -1,14 +1,14 @@
 @if (loading()) {
   <div class="loading-container">
     <div class="spinner"></div>
-    <p>Chargement des données du héros...</p>
+    <p>Loading hero data...</p>
   </div>
 }
 
 @if (error()) {
   <div class="error-container">
     <p>{{ error() }}</p>
-    <a routerLink="/tierlist" class="back-link">← Retour à la Tier List</a>
+    <a routerLink="/tierlist" class="back-link">← Back to Tier List</a>
   </div>
 }
 
@@ -42,7 +42,7 @@
               <span class="stat-value">{{ hero()!.avgKills | number:'1.1-1' }} / {{ hero()!.avgDeaths | number:'1.1-1' }} / {{ hero()!.avgAssists | number:'1.1-1' }}</span>
             </div>
             <div class="stat-card">
-              <span class="stat-label">Matchs</span>
+              <span class="stat-label">Matches</span>
               <span class="stat-value">{{ hero()!.stats.matches | number }}</span>
             </div>
           </div>
@@ -54,7 +54,7 @@
   <!-- Items Section -->
   <section class="section section-items">
     <div class="container">
-      <h2 class="section-title">Items Populaires</h2>
+      <h2 class="section-title">Popular Items</h2>
       <div class="items-grid">
         @for (item of topItems(); track item.item_id) {
           <div class="item-card">
@@ -73,9 +73,9 @@
                 <span class="item-winrate" [class.high]="getItemWinRate(item) >= 55" [class.low]="getItemWinRate(item) < 45">
                   {{ getItemWinRate(item) | number:'1.1-1' }}% WR
                 </span>
-                <span class="item-matches">{{ item.matches | number }} matchs</span>
+                <span class="item-matches">{{ item.matches | number }} matches</span>
               </div>
-              <span class="item-buytime">Achat moyen : {{ formatBuyTime(item.avg_buy_time_s) }}</span>
+              <span class="item-buytime">Avg. buy time: {{ formatBuyTime(item.avg_buy_time_s) }}</span>
             </div>
           </div>
         }
@@ -89,7 +89,7 @@
       <h2 class="section-title">Counters</h2>
       <div class="counters-grid">
         <div class="counter-column">
-          <h3 class="counter-subtitle weak">Faible contre</h3>
+          <h3 class="counter-subtitle weak">Weak Against</h3>
           <div class="counter-list">
             @for (counter of weakAgainst(); track counter.enemy_hero_id) {
               <a class="counter-card" [routerLink]="['/hero', counter.enemy_hero_id]">
@@ -102,13 +102,13 @@
                   <span class="counter-name">{{ counter.enemyInfo?.name || 'Hero #' + counter.enemy_hero_id }}</span>
                   <span class="counter-winrate low">{{ counter.winRate | number:'1.1-1' }}% WR</span>
                 </div>
-                <span class="counter-matches">{{ counter.matches_played | number }} matchs</span>
+                <span class="counter-matches">{{ counter.matches_played | number }} matches</span>
               </a>
             }
           </div>
         </div>
         <div class="counter-column">
-          <h3 class="counter-subtitle strong">Fort contre</h3>
+          <h3 class="counter-subtitle strong">Strong Against</h3>
           <div class="counter-list">
             @for (counter of strongAgainst(); track counter.enemy_hero_id) {
               <a class="counter-card" [routerLink]="['/hero', counter.enemy_hero_id]">
@@ -121,7 +121,7 @@
                   <span class="counter-name">{{ counter.enemyInfo?.name || 'Hero #' + counter.enemy_hero_id }}</span>
                   <span class="counter-winrate high">{{ counter.winRate | number:'1.1-1' }}% WR</span>
                 </div>
-                <span class="counter-matches">{{ counter.matches_played | number }} matchs</span>
+                <span class="counter-matches">{{ counter.matches_played | number }} matches</span>
               </a>
             }
           </div>
@@ -133,15 +133,15 @@
   <!-- Builds Section -->
   <section class="section section-builds">
     <div class="container">
-      <h2 class="section-title">Builds Populaires</h2>
+      <h2 class="section-title">Popular Builds</h2>
       <div class="builds-list">
         @for (build of builds(); track build.hero_build.hero_build_id) {
           <div class="build-card">
             <div class="build-header">
               <span class="build-name">{{ build.hero_build.name }}</span>
               <div class="build-meta">
-                <span class="build-favorites">⭐ {{ build.num_favorites | number }} favoris</span>
-                <span class="build-weekly">📈 {{ build.num_weekly_favorites | number }} cette semaine</span>
+                <span class="build-favorites">⭐ {{ build.num_favorites | number }} favorites</span>
+                <span class="build-weekly">📈 {{ build.num_weekly_favorites | number }} this week</span>
               </div>
             </div>
             <div class="build-id">
@@ -151,7 +151,7 @@
           </div>
         }
         @if (builds().length === 0) {
-          <p class="no-data">Aucun build disponible pour ce héros.</p>
+          <p class="no-data">No builds available for this hero.</p>
         }
       </div>
     </div>

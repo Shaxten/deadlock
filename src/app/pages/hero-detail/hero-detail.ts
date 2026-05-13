@@ -50,7 +50,7 @@ export class HeroDetail implements OnInit {
   ngOnInit(): void {
     const heroId = Number(this.route.snapshot.paramMap.get('id'));
     if (!heroId) {
-      this.error.set('Héros introuvable.');
+      this.error.set('Hero not found.');
       this.loading.set(false);
       return;
     }
@@ -73,7 +73,7 @@ export class HeroDetail implements OnInit {
         const heroStats = stats.find(s => s.hero_id === heroId);
 
         if (!heroInfo || !heroStats) {
-          this.error.set('Héros introuvable.');
+          this.error.set('Hero not found.');
           this.loading.set(false);
           return;
         }
@@ -101,7 +101,7 @@ export class HeroDetail implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        this.error.set('Impossible de charger les données du héros.');
+        this.error.set('Failed to load hero data.');
         this.loading.set(false);
         console.error(err);
       }

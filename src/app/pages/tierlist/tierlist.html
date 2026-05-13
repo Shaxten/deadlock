@@ -7,10 +7,10 @@
   <div class="hero-content">
     <div class="hero-label">
       <span class="label-line"></span>
-      <span class="label-text">Classement Actuel</span>
+      <span class="label-text">Current Rankings</span>
     </div>
     <h1 class="hero-title">Tier List</h1>
-    <p class="hero-subtitle">Classement des héros basé sur le win rate des 30 derniers jours. Données issues de millions de matchs analysés.</p>
+    <p class="hero-subtitle">Hero rankings based on win rate over the last 30 days. Data from millions of analyzed matches.</p>
   </div>
 </section>
 
@@ -18,7 +18,7 @@
   <div class="container">
     <!-- Rank Filter -->
     <div class="rank-filter">
-      <span class="filter-label">Filtrer par rang :</span>
+      <span class="filter-label">Filter by rank:</span>
       <div class="rank-buttons">
         @for (rank of rankFilters; track rank.label) {
           <button
@@ -34,7 +34,7 @@
     @if (loading) {
       <div class="loading">
         <div class="spinner"></div>
-        <p>Chargement des données...</p>
+        <p>Loading data...</p>
       </div>
     }
 
@@ -67,7 +67,7 @@
                       <strong>{{ hero.winRate | number:'1.1-1' }}%</strong>
                     </div>
                     <div class="tooltip-row">
-                      <span>Matchs</span>
+                      <span>Matches</span>
                       <strong>{{ hero.stats.matches | number }}</strong>
                     </div>
                     <div class="tooltip-row">

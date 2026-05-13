@@ -5,15 +5,15 @@
       <span class="logo-text">Deadlock</span>
     </a>
 
-    <button class="menu-toggle" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Menu de navigation">
+    <button class="menu-toggle" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Navigation menu">
       <span class="bar" [class.open]="menuOpen"></span>
       <span class="bar" [class.open]="menuOpen"></span>
       <span class="bar" [class.open]="menuOpen"></span>
     </button>
 
-    <nav class="nav" [class.open]="menuOpen" aria-label="Navigation principale">
+    <nav class="nav" [class.open]="menuOpen" aria-label="Main navigation">
       <ul class="nav-list">
-        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false">Accueil</a></li>
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false">Home</a></li>
         <li><a routerLink="/tierlist" routerLinkActive="active" (click)="menuOpen = false">Tier List</a></li>
       </ul>
     </nav>

@@ -41,7 +41,7 @@ export class Tierlist implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Impossible de charger les données. Réessayez plus tard.';
+        this.error = 'Failed to load data. Please try again later.';
         this.loading = false;
         console.error(err);
       }
