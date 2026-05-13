@@ -162,3 +162,37 @@ export interface PlayerMatch {
   player_team: number;
   hero_level: number;
 }
+
+export interface MatchMetadata {
+  match_info: {
+    duration_s: number;
+    match_mode: number;
+    game_mode: number;
+    start_time: number;
+    winning_team: number;
+  };
+  players: MatchPlayer[];
+}
+
+export interface MatchPlayer {
+  account_id: number;
+  player_slot: number;
+  team: number;
+  hero_id: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  net_worth: number;
+  last_hits: number;
+  denies: number;
+  player_level: number;
+  gold_player: number;
+  gold_player_orbs: number;
+  gold_lane_creep_orbs: number;
+  gold_neutral_creep_orbs: number;
+  gold_boss: number;
+  assigned_lane: number;
+  player_damage: number;
+  player_healing: number;
+  damage_taken: number;
+}

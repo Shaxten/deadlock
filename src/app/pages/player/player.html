@@ -112,7 +112,9 @@
           <h3 class="section-title">Recent Matches</h3>
           <div class="match-list">
             @for (match of matchHistory(); track match.match_id) {
-              <div class="match-row" [class.win]="isWin(match)" [class.loss]="!isWin(match)">
+              <a class="match-row" [class.win]="isWin(match)" [class.loss]="!isWin(match)"
+                 [routerLink]="'/match/' + match.match_id"
+                 [queryParams]="{ player: match.account_id }">
                 <div class="match-hero">
                   @if (getHeroImage(match.hero_id)) {
                     <img [src]="getHeroImage(match.hero_id)" [alt]="getHeroName(match.hero_id)" class="match-hero-img" />
@@ -130,9 +132,67 @@
                   <span class="match-duration">{{ formatDuration(match.match_duration_s) }}</span>
                   <span class="match-date">{{ formatDate(match.start_time) }}</span>
                 </div>
-              </div>
+              </a>
             }
           </div>
+        </div>
+      </section>
+    }
+
+    <!-- Performance Insights -->
+    @if (matchHistory().length > 0) {
+      <section class="section section-performance">
+        <div class="container">
+          <h3 class="section-title">Performance Insights</h3>
+
+          <div class="performance-overview">
+            <div class="perf-stat-card">
+              <span class="perf-stat-value">{{ avgSoulsPerMin() | number:'1.0-0' }}</span>
+              <span class="perf-stat-label">Avg Souls/Min</span>
+            </div>
+            <div class="perf-stat-card">
+              <span class="perf-stat-value">{{ avgKills() | number:'1.1-1' }} / {{ avgDeaths() | number:'1.1-1' }} / {{ avgAssists() | number:'1.1-1' }}</span>
+              <span class="perf-stat-label">Avg K/D/A</span>
+            </div>
+          </div>
+
+          @if (lowPerformanceMatches().length > 0) {
+            <h4 class="subsection-title">Low Performance Matches</h4>
+            <div class="low-perf-list">
+              @for (entry of lowPerformanceMatches(); track entry.match.match_id) {
+                <div class="low-perf-row">
+                  <div class="low-perf-hero">
+                    @if (getHeroImage(entry.match.hero_id)) {
+                      <img [src]="getHeroImage(entry.match.hero_id)" [alt]="getHeroName(entry.match.hero_id)" class="low-perf-hero-img" />
+                    }
+                  </div>
+                  <div class="low-perf-info">
+                    <span class="low-perf-hero-name">{{ getHeroName(entry.match.hero_id) }}</span>
+                    <span class="low-perf-date">{{ formatDate(entry.match.start_time) }}</span>
+                  </div>
+                  <div class="low-perf-stats">
+                    <span class="low-perf-spm">
+                      {{ entry.soulsPerMin | number:'1.0-0' }} spm
+                      <span class="low-perf-vs">vs {{ avgSoulsPerMin() | number:'1.0-0' }} avg</span>
+                    </span>
+                  </div>
+                  <div class="low-perf-deaths" [class.flagged]="entry.isHighDeaths">
+                    {{ entry.match.player_deaths }} deaths
+                  </div>
+                  <div class="low-perf-flags">
+                    @if (entry.isBelowAvgSpm) {
+                      <span class="flag-badge spm-flag">Low SPM</span>
+                    }
+                    @if (entry.isHighDeaths) {
+                      <span class="flag-badge deaths-flag">High Deaths</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-issues">No performance issues detected. Keep it up!</p>
+          }
         </div>
       </section>
     }

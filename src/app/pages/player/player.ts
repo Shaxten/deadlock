@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { PlayerService } from '../../services/player.service';
 import { HeroService } from '../../services/hero.service';
@@ -12,7 +12,7 @@ const STEAM_ID_64_BASE = BigInt('76561197960265728');
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './player.html',
   styleUrl: './player.scss'
 })
@@ -39,6 +39,54 @@ export class Player implements OnInit {
 
   sortedHeroStats = computed(() => {
     return [...this.heroStats()].sort((a, b) => b.matches_played - a.matches_played);
+  });
+
+  // Performance Insights
+  avgSoulsPerMin = computed(() => {
+    const matches = this.matchHistory();
+    if (matches.length === 0) return 0;
+    const total = matches.reduce((sum, m) => sum + (m.net_worth / Math.max(m.match_duration_s / 60, 1)), 0);
+    return total / matches.length;
+  });
+
+  avgKills = computed(() => {
+    const matches = this.matchHistory();
+    if (matches.length === 0) return 0;
+    return matches.reduce((sum, m) => sum + m.player_kills, 0) / matches.length;
+  });
+
+  avgDeaths = computed(() => {
+    const matches = this.matchHistory();
+    if (matches.length === 0) return 0;
+    return matches.reduce((sum, m) => sum + m.player_deaths, 0) / matches.length;
+  });
+
+  avgAssists = computed(() => {
+    const matches = this.matchHistory();
+    if (matches.length === 0) return 0;
+    return matches.reduce((sum, m) => sum + m.player_assists, 0) / matches.length;
+  });
+
+  lowPerformanceMatches = computed(() => {
+    const matches = this.matchHistory();
+    const avgSpm = this.avgSoulsPerMin();
+    const avgD = this.avgDeaths();
+    if (matches.length === 0 || avgSpm === 0) return [];
+
+    return matches
+      .map(m => {
+        const soulsPerMin = m.net_worth / Math.max(m.match_duration_s / 60, 1);
+        const isBelowAvgSpm = soulsPerMin < avgSpm * 0.75;
+        const isHighDeaths = m.player_deaths > avgD * 1.5;
+        return {
+          match: m,
+          soulsPerMin,
+          isBelowAvgSpm,
+          isHighDeaths,
+          flagged: isBelowAvgSpm || isHighDeaths
+        };
+      })
+      .filter(entry => entry.flagged);
   });
 
   ngOnInit(): void {

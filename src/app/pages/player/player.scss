@@ -342,6 +342,166 @@
   background: var(--color-primary);
 }
 
+// Performance Insights
+.section-performance {
+  background: var(--color-light);
+  animation: slideIn 0.5s ease-out;
+}
+
+.performance-overview {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.perf-stat-card {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.25rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  animation: slideIn 0.4s ease-out both;
+}
+
+.perf-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.perf-stat-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.subsection-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-secondary);
+  margin: 0 0 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.low-perf-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.low-perf-row {
+  background: rgba(255, 70, 85, 0.06);
+  border: 1px solid rgba(255, 70, 85, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideIn 0.3s ease-out both;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 70, 85, 0.1);
+  }
+}
+
+.low-perf-hero-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.low-perf-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.low-perf-hero-name {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.low-perf-date {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.low-perf-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.low-perf-spm {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.low-perf-vs {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 0.4rem;
+}
+
+.low-perf-deaths {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+
+  &.flagged {
+    color: var(--color-secondary);
+    font-weight: 600;
+  }
+}
+
+.low-perf-flags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.flag-badge {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+
+  &.spm-flag {
+    background: rgba(255, 70, 85, 0.15);
+    color: var(--color-secondary);
+  }
+
+  &.deaths-flag {
+    background: rgba(255, 167, 38, 0.15);
+    color: #ffa726;
+  }
+}
+
+.no-issues {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  padding: 1rem 0;
+}
+
 // Hero Stats Grid
 .hero-stats-grid {
   display: grid;
@@ -441,6 +601,9 @@
   gap: 1rem;
   transition: border-color 0.2s, transform 0.2s;
   animation: slideIn 0.3s ease-out both;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 
   &:hover {
     border-color: rgba(255, 255, 255, 0.12);

@@ -14,6 +14,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/hero-detail/hero-detail').then(m => m.HeroDetail)
   },
   {
+    path: 'match/:id',
+    loadComponent: () => import('./pages/match-detail/match-detail').then(m => m.MatchDetail)
+  },
+  {
     path: 'player',
     loadComponent: () => import('./pages/player/player').then(m => m.Player)
   },
