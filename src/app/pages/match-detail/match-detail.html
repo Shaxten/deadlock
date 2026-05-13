@@ -23,19 +23,19 @@
         <div class="match-info-bar">
           <span class="match-duration">
             <span class="info-label">Duration</span>
-            <span class="info-value">{{ formatDuration(match.match_info.duration_s) }}</span>
+            <span class="info-value">{{ formatDuration(match.match_info?.duration_s || 0) }}</span>
           </span>
           <span class="match-date">
             <span class="info-label">Date</span>
-            <span class="info-value">{{ formatDate(match.match_info.start_time) }}</span>
+            <span class="info-value">{{ formatDate(match.match_info?.start_time || 0) }}</span>
           </span>
         </div>
       </div>
     </section>
 
+    @if (team0().length > 0 || team1().length > 0) {
     <section class="teams-section">
       <div class="teams-container">
-        <!-- Team 0 -->
         <div class="team-panel" [class.winner]="isWinningTeam(0)" [class.loser]="!isWinningTeam(0)">
           <div class="team-header">
             <h2 class="team-name">Team Amber</h2>
@@ -118,5 +118,6 @@
         </div>
       </div>
     </section>
+    }
   }
 </div>

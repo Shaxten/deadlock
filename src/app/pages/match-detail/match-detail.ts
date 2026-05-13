@@ -32,18 +32,18 @@ export class MatchDetail implements OnInit {
 
   team0 = computed(() => {
     const data = this.matchData();
-    if (!data) return [];
+    if (!data?.players) return [];
     return data.players.filter(p => p.team === 0);
   });
 
   team1 = computed(() => {
     const data = this.matchData();
-    if (!data) return [];
+    if (!data?.players) return [];
     return data.players.filter(p => p.team === 1);
   });
 
   winningTeam = computed(() => {
-    return this.matchData()?.match_info.winning_team ?? -1;
+    return this.matchData()?.match_info?.winning_team ?? -1;
   });
 
   ngOnInit(): void {
