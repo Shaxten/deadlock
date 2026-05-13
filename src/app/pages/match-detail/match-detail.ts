@@ -174,6 +174,10 @@ export class MatchDetail implements OnInit {
     return '';
   }
 
+  getItemImage(item: ItemInfo): string {
+    return item.shop_image_webp || item.shop_image || item.image_webp || item.image || '';
+  }
+
   // Death timing analysis
   getDeathAnalysis(player: MatchPlayer): { time: string; period: string; isClustered: boolean }[] {
     return player.death_times.map((t, i, arr) => {

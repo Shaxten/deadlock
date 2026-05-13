@@ -59,8 +59,8 @@
         @for (item of topItems(); track item.item_id) {
           <div class="item-card" [class.slot-weapon]="item.info?.item_slot_type === 'weapon'" [class.slot-spirit]="item.info?.item_slot_type === 'spirit'" [class.slot-vitality]="item.info?.item_slot_type === 'vitality'">
             <div class="item-image-wrapper">
-              @if (item.info?.image_webp) {
-                <img [src]="item.info!.image_webp" [alt]="item.info?.name || 'Item'" loading="lazy" />
+              @if (item.info?.shop_image_webp || item.info?.image_webp) {
+                <img [src]="item.info!.shop_image_webp || item.info!.image_webp" [alt]="item.info?.name || 'Item'" loading="lazy" />
               } @else if (item.info?.image) {
                 <img [src]="item.info!.image" [alt]="item.info?.name || 'Item'" loading="lazy" />
               } @else {
@@ -147,7 +147,7 @@
             <div class="build-items">
               @for (item of getBuildItems(build); track item.id) {
                 <div class="build-item" [class.slot-weapon]="item.item_slot_type === 'weapon'" [class.slot-spirit]="item.item_slot_type === 'spirit'" [class.slot-vitality]="item.item_slot_type === 'vitality'">
-                  <img [src]="item.image_webp || item.image" [alt]="item.name" loading="lazy" />
+                  <img [src]="item.shop_image_webp || item.image_webp || item.image" [alt]="item.name" loading="lazy" />
                   <span class="build-item-name">{{ item.name }}</span>
                 </div>
               }

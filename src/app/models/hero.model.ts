@@ -92,6 +92,8 @@ export interface ItemInfo {
   name: string;
   image: string;
   image_webp: string;
+  shop_image_webp?: string;
+  shop_image?: string;
   type: string;
   item_slot_type?: 'weapon' | 'spirit' | 'vitality';
 }
