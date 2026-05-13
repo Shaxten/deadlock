@@ -144,6 +144,17 @@
                 <span class="build-weekly">📈 {{ build.num_weekly_favorites | number }} this week</span>
               </div>
             </div>
+            <div class="build-items">
+              @for (item of getBuildItems(build); track item.id) {
+                <div class="build-item" [class.slot-weapon]="item.item_slot_type === 'weapon'" [class.slot-spirit]="item.item_slot_type === 'spirit'" [class.slot-vitality]="item.item_slot_type === 'vitality'">
+                  <img [src]="item.image_webp || item.image" [alt]="item.name" loading="lazy" />
+                  <span class="build-item-name">{{ item.name }}</span>
+                </div>
+              }
+              @if (getBuildItems(build).length === 0) {
+                <span class="no-items">No item data</span>
+              }
+            </div>
             <div class="build-id">
               <span class="build-id-label">Build ID:</span>
               <code class="build-id-value">{{ build.hero_build.hero_build_id }}</code>

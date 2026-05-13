@@ -20,6 +20,7 @@ export class HeroDetail implements OnInit {
   counters = signal<Array<HeroCounterStats & { enemyInfo?: HeroInfo }>>([]);
   builds = signal<HeroBuild[]>([]);
   allHeroes = signal<HeroInfo[]>([]);
+  allItems = signal<Map<number, ItemInfo>>(new Map());
 
   loading = signal(true);
   error = signal('');
@@ -90,6 +91,7 @@ export class HeroDetail implements OnInit {
         // Map item stats with item info
         const itemMap = new Map<number, ItemInfo>();
         itemInfos.forEach(i => itemMap.set(i.id, i));
+        this.allItems.set(itemMap);
         this.items.set(itemStats.map(is => ({ ...is, info: itemMap.get(is.item_id) })));
 
         // Map counter stats with hero info
@@ -126,5 +128,22 @@ export class HeroDetail implements OnInit {
   getItemWinRate(item: ItemStats): number {
     if (!item.matches || item.matches === 0) return 0;
     return (item.wins / item.matches) * 100;
+  }
+
+  getBuildItems(build: HeroBuild): ItemInfo[] {
+    const itemMap = this.allItems();
+    const itemIds: number[] = [];
+    for (const category of build.hero_build.details.mod_categories) {
+      if (category.mods) {
+        for (const mod of category.mods) {
+          if (mod.ability_id && itemMap.has(mod.ability_id)) {
+            itemIds.push(mod.ability_id);
+          }
+          if (itemIds.length >= 6) break;
+        }
+      }
+      if (itemIds.length >= 6) break;
+    }
+    return itemIds.map(id => itemMap.get(id)!).filter(Boolean);
   }
 }
