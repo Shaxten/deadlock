@@ -93,6 +93,7 @@ export interface ItemInfo {
   image: string;
   image_webp: string;
   type: string;
+  item_slot_type?: 'weapon' | 'spirit' | 'vitality';
 }
 
 export interface HeroCounterStats {

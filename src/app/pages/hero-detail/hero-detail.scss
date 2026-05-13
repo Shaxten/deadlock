@@ -97,6 +97,7 @@
   }
 
   .banner-content {
+    padding-top: 3rem;
     position: relative;
     max-width: 1200px;
     margin: 0 auto;
@@ -297,6 +298,34 @@
     font-family: var(--font-body);
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.4);
+  }
+
+  // Slot type color coding
+  &.slot-weapon {
+    border-left: 3px solid #f59e0b;
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, var(--color-surface) 30%);
+
+    .item-image-wrapper {
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+  }
+
+  &.slot-spirit {
+    border-left: 3px solid #a855f7;
+    background: linear-gradient(90deg, rgba(168, 85, 247, 0.08) 0%, var(--color-surface) 30%);
+
+    .item-image-wrapper {
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+  }
+
+  &.slot-vitality {
+    border-left: 3px solid #22c55e;
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.08) 0%, var(--color-surface) 30%);
+
+    .item-image-wrapper {
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
   }
 }
 

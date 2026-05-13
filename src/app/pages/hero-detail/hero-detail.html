@@ -57,7 +57,7 @@
       <h2 class="section-title">Popular Items</h2>
       <div class="items-grid">
         @for (item of topItems(); track item.item_id) {
-          <div class="item-card">
+          <div class="item-card" [class.slot-weapon]="item.info?.item_slot_type === 'weapon'" [class.slot-spirit]="item.info?.item_slot_type === 'spirit'" [class.slot-vitality]="item.info?.item_slot_type === 'vitality'">
             <div class="item-image-wrapper">
               @if (item.info?.image_webp) {
                 <img [src]="item.info!.image_webp" [alt]="item.info?.name || 'Item'" loading="lazy" />
