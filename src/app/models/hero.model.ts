@@ -159,5 +159,6 @@ export interface PlayerMatch {
   player_assists: number;
   net_worth: number;
   match_result: number;
+  player_team: number;
   hero_level: number;
 }

@@ -186,6 +186,6 @@ export class Player implements OnInit {
   }
 
   isWin(match: PlayerMatch): boolean {
-    return match.match_result === 1;
+    return match.player_team === match.match_result;
   }
 }
