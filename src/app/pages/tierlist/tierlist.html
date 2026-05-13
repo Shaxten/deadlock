@@ -1,0 +1,71 @@
+<section class="tierlist-hero">
+  <div class="hero-bg">
+    <div class="grid-overlay"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-label">
+      <span class="label-line"></span>
+      <span class="label-text">Classement Actuel</span>
+    </div>
+    <h1 class="hero-title">Tier List</h1>
+    <p class="hero-subtitle">Classement des héros basé sur le win rate des 30 derniers jours. Données issues de millions de matchs analysés.</p>
+  </div>
+</section>
+
+<section class="section section-tierlist">
+  <div class="container">
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Chargement des données...</p>
+      </div>
+    }
+
+    @if (error) {
+      <div class="error-message">
+        <p>{{ error }}</p>
+      </div>
+    }
+
+    @if (!loading && !error) {
+      <div class="tiers-container">
+        @for (tier of tiers; track trackByTier($index, tier)) {
+          <div class="tier-row">
+            <div class="tier-label" [style.background]="tier.color">
+              <span>{{ tier.label }}</span>
+            </div>
+            <div class="tier-heroes">
+              @for (hero of tier.heroes; track trackByHero($index, hero)) {
+                <div class="hero-card" [style.--tier-color]="tier.color">
+                  <div class="hero-img-wrapper">
+                    <img [src]="getHeroImage(hero)" [alt]="hero.info.name" loading="lazy" />
+                  </div>
+                  <div class="hero-info">
+                    <span class="hero-name">{{ hero.info.name }}</span>
+                    <span class="hero-winrate">{{ hero.winRate | number:'1.1-1' }}%</span>
+                  </div>
+                  <div class="hero-tooltip">
+                    <div class="tooltip-row">
+                      <span>Win Rate</span>
+                      <strong>{{ hero.winRate | number:'1.1-1' }}%</strong>
+                    </div>
+                    <div class="tooltip-row">
+                      <span>Matchs</span>
+                      <strong>{{ hero.stats.matches | number }}</strong>
+                    </div>
+                    <div class="tooltip-row">
+                      <span>KDA</span>
+                      <strong>{{ hero.avgKills | number:'1.1-1' }} / {{ hero.avgDeaths | number:'1.1-1' }} / {{ hero.avgAssists | number:'1.1-1' }}</strong>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

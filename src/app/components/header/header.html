@@ -1,0 +1,21 @@
+<header class="header" [class.scrolled]="scrolled">
+  <div class="header-inner">
+    <a routerLink="/" class="logo">
+      <span class="logo-mark">D</span>
+      <span class="logo-text">Deadlock</span>
+    </a>
+
+    <button class="menu-toggle" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen" aria-label="Menu de navigation">
+      <span class="bar" [class.open]="menuOpen"></span>
+      <span class="bar" [class.open]="menuOpen"></span>
+      <span class="bar" [class.open]="menuOpen"></span>
+    </button>
+
+    <nav class="nav" [class.open]="menuOpen" aria-label="Navigation principale">
+      <ul class="nav-list">
+        <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false">Accueil</a></li>
+        <li><a routerLink="/tierlist" routerLinkActive="active" (click)="menuOpen = false">Tier List</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

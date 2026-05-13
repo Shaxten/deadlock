@@ -1,0 +1,309 @@
+/* Tier List Hero Banner */
+.tierlist-hero {
+  position: relative;
+  min-height: 45vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  overflow: hidden;
+  padding: 10rem 2rem 4rem;
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 70, 85, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 70, 85, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .gradient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      &.orb-1 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(255, 70, 85, 0.15), transparent); top: 0; right: 10%; }
+      &.orb-2 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(0, 212, 170, 0.1), transparent); bottom: 0; left: 10%; }
+    }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    max-width: 650px;
+  }
+
+  .hero-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.6s ease-out both;
+
+    .label-line { width: 40px; height: 1px; background: var(--color-accent); }
+    .label-text { font-size: 0.8rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--color-accent); }
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    color: white;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.6s ease-out 0.1s both;
+    text-shadow: 0 0 40px rgba(255, 70, 85, 0.2);
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.7;
+    animation: fadeIn 0.6s ease-out 0.2s both;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tier List Content */
+.section-tierlist {
+  padding: 4rem 0 6rem;
+  background: var(--color-light);
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 4rem 0;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 70, 85, 0.2);
+    border-top-color: var(--color-secondary);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    color: var(--color-muted);
+    font-size: 0.95rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  text-align: center;
+  padding: 3rem;
+  background: rgba(255, 70, 85, 0.1);
+  border: 1px solid rgba(255, 70, 85, 0.2);
+  border-radius: 12px;
+
+  p { color: var(--color-secondary); }
+}
+
+/* Tiers */
+.tiers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tier-row {
+  display: flex;
+  background: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  animation: tierSlideIn 0.5s ease-out both;
+
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+@keyframes tierSlideIn {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.tier-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 1rem;
+
+  span {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.tier-heroes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  flex: 1;
+  align-items: center;
+}
+
+.hero-card {
+  position: relative;
+  width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.25rem;
+  border-radius: 8px;
+  transition: transform 0.3s, background 0.3s;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.05);
+
+    .hero-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: all;
+    }
+
+    .hero-img-wrapper {
+      box-shadow: 0 0 15px color-mix(in srgb, var(--tier-color) 40%, transparent);
+    }
+  }
+}
+
+.hero-img-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.3s, border-color 0.3s;
+  background: var(--color-dark);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.hero-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.hero-name {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-winrate {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  font-family: var(--font-display);
+}
+
+/* Tooltip */
+.hero-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: var(--color-dark);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  min-width: 180px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 100;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--color-dark);
+  }
+}
+
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+
+  span {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  strong {
+    font-size: 0.75rem;
+    color: white;
+    font-family: var(--font-display);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tier-row {
+    flex-direction: column;
+  }
+
+  .tier-label {
+    min-width: unset;
+    padding: 0.75rem;
+  }
+
+  .tier-heroes {
+    justify-content: center;
+  }
+
+  .hero-card {
+    width: 60px;
+  }
+
+  .hero-img-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+}
