@@ -127,3 +127,37 @@ export interface HeroBuild {
   num_favorites: number;
   num_weekly_favorites: number;
 }
+
+export interface SteamProfile {
+  account_id: number;
+  personaname: string;
+  avatar: string;
+  avatarfull: string;
+  avatarmedium: string;
+  profileurl: string;
+}
+
+export interface PlayerHeroStats {
+  account_id: number;
+  hero_id: number;
+  matches_played: number;
+  wins: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  last_played: number;
+}
+
+export interface PlayerMatch {
+  account_id: number;
+  match_id: number;
+  hero_id: number;
+  start_time: number;
+  match_duration_s: number;
+  player_kills: number;
+  player_deaths: number;
+  player_assists: number;
+  net_worth: number;
+  match_result: number;
+  hero_level: number;
+}

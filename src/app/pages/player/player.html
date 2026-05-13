@@ -1,0 +1,119 @@
+<div class="player-page">
+  <!-- Search Section -->
+  <section class="search-section">
+    <div class="search-container">
+      <h1 class="page-title">Player Stats</h1>
+      <p class="page-subtitle">Enter a Steam ID, SteamID64, or Steam profile URL to view Deadlock stats</p>
+
+      <div class="search-box">
+        <input
+          type="text"
+          class="search-input"
+          [(ngModel)]="searchInput"
+          placeholder="Steam ID, SteamID64, or profile URL..."
+          (keyup.enter)="search()"
+          aria-label="Steam ID input"
+        />
+        <button class="search-btn" (click)="search()" [disabled]="loading()">
+          @if (loading()) {
+            <span class="btn-spinner"></span>
+          } @else {
+            Search
+          }
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading player data...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="error-container">
+      <p class="error-message">{{ error() }}</p>
+    </div>
+  }
+
+  <!-- Player Profile -->
+  @if (profile(); as p) {
+    <section class="profile-section">
+      <div class="profile-card">
+        <img [src]="p.avatarfull" [alt]="p.personaname" class="profile-avatar" />
+        <div class="profile-info">
+          <h2 class="profile-name">{{ p.personaname }}</h2>
+          <a [href]="p.profileurl" target="_blank" rel="noopener" class="profile-link">
+            View Steam Profile
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hero Stats -->
+    @if (sortedHeroStats().length > 0) {
+      <section class="section section-hero-stats">
+        <div class="container">
+          <h3 class="section-title">Hero Stats</h3>
+          <div class="hero-stats-grid">
+            @for (stat of sortedHeroStats(); track stat.hero_id) {
+              <div class="hero-stat-card">
+                <div class="hero-stat-image">
+                  @if (getHeroImage(stat.hero_id)) {
+                    <img [src]="getHeroImage(stat.hero_id)" [alt]="getHeroName(stat.hero_id)" />
+                  }
+                </div>
+                <div class="hero-stat-info">
+                  <span class="hero-stat-name">{{ getHeroName(stat.hero_id) }}</span>
+                  <div class="hero-stat-details">
+                    <span class="hero-stat-matches">{{ stat.matches_played }} matches</span>
+                    <span class="hero-stat-winrate" [class.high]="getWinRate(stat) >= 50" [class.low]="getWinRate(stat) < 50">
+                      {{ getWinRate(stat) | number:'1.1-1' }}% WR
+                    </span>
+                  </div>
+                  <span class="hero-stat-kda">{{ getKda(stat) }} KDA</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+
+    <!-- Match History -->
+    @if (matchHistory().length > 0) {
+      <section class="section section-matches">
+        <div class="container">
+          <h3 class="section-title">Recent Matches</h3>
+          <div class="match-list">
+            @for (match of matchHistory(); track match.match_id) {
+              <div class="match-row" [class.win]="isWin(match)" [class.loss]="!isWin(match)">
+                <div class="match-hero">
+                  @if (getHeroImage(match.hero_id)) {
+                    <img [src]="getHeroImage(match.hero_id)" [alt]="getHeroName(match.hero_id)" class="match-hero-img" />
+                  }
+                </div>
+                <div class="match-result-badge" [class.win]="isWin(match)" [class.loss]="!isWin(match)">
+                  {{ isWin(match) ? 'W' : 'L' }}
+                </div>
+                <div class="match-details">
+                  <span class="match-hero-name">{{ getHeroName(match.hero_id) }}</span>
+                  <span class="match-kda">{{ match.player_kills }}/{{ match.player_deaths }}/{{ match.player_assists }}</span>
+                </div>
+                <div class="match-meta">
+                  <span class="match-networth">{{ match.net_worth | number }} souls</span>
+                  <span class="match-duration">{{ formatDuration(match.match_duration_s) }}</span>
+                  <span class="match-date">{{ formatDate(match.start_time) }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+  }
+</div>

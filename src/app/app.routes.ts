@@ -14,6 +14,14 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/hero-detail/hero-detail').then(m => m.HeroDetail)
   },
   {
+    path: 'player',
+    loadComponent: () => import('./pages/player/player').then(m => m.Player)
+  },
+  {
+    path: 'player/:id',
+    loadComponent: () => import('./pages/player/player').then(m => m.Player)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
