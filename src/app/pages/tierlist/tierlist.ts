@@ -1,11 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { HeroService } from '../../services/hero.service';
 import { Tier, TierHero, RankFilter } from '../../models/hero.model';
 
 @Component({
   selector: 'app-tierlist',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './tierlist.html',
   styleUrl: './tierlist.scss'
 })

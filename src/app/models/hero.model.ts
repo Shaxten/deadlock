@@ -72,3 +72,57 @@ export interface RankFilter {
   minBadge: number;
   maxBadge: number;
 }
+
+export interface ItemStats {
+  item_id: number;
+  bucket: number;
+  wins: number;
+  losses: number;
+  matches: number;
+  players: number;
+  avg_buy_time_s: number;
+  avg_sell_time_s: number;
+  avg_buy_time_relative: number;
+  avg_sell_time_relative: number;
+}
+
+export interface ItemInfo {
+  id: number;
+  class_name: string;
+  name: string;
+  image: string;
+  image_webp: string;
+  type: string;
+}
+
+export interface HeroCounterStats {
+  hero_id: number;
+  enemy_hero_id: number;
+  wins: number;
+  matches_played: number;
+  kills: number;
+  enemy_kills: number;
+  deaths: number;
+  enemy_deaths: number;
+  assists: number;
+  enemy_assists: number;
+}
+
+export interface HeroBuild {
+  hero_build: {
+    hero_id: number;
+    hero_build_id: number;
+    name: string;
+    author_account_id: number;
+    language: string;
+    version: number;
+    details: {
+      mod_categories: Array<{
+        name: string;
+        mods?: Array<{ ability_id: number }>;
+      }>;
+    };
+  };
+  num_favorites: number;
+  num_weekly_favorites: number;
+}

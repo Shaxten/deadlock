@@ -53,7 +53,7 @@
             </div>
             <div class="tier-heroes">
               @for (hero of tier.heroes; track trackByHero($index, hero)) {
-                <div class="hero-card" [style.--tier-color]="tier.color">
+                <a class="hero-card" [routerLink]="['/hero', hero.info.id]" [style.--tier-color]="tier.color">
                   <div class="hero-img-wrapper">
                     <img [src]="getHeroImage(hero)" [alt]="hero.info.name" loading="lazy" />
                   </div>
@@ -75,7 +75,7 @@
                       <strong>{{ hero.avgKills | number:'1.1-1' }} / {{ hero.avgDeaths | number:'1.1-1' }} / {{ hero.avgAssists | number:'1.1-1' }}</strong>
                     </div>
                   </div>
-                </div>
+                </a>
               }
             </div>
           </div>

@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/tierlist/tierlist').then(m => m.Tierlist)
   },
   {
+    path: 'hero/:id',
+    loadComponent: () => import('./pages/hero-detail/hero-detail').then(m => m.HeroDetail)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

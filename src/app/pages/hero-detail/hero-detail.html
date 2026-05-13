@@ -1,0 +1,159 @@
+@if (loading()) {
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des données du héros...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="error-container">
+    <p>{{ error() }}</p>
+    <a routerLink="/tierlist" class="back-link">← Retour à la Tier List</a>
+  </div>
+}
+
+@if (!loading() && !error() && hero()) {
+  <!-- Hero Banner -->
+  <section class="hero-banner">
+    <div class="banner-bg">
+      <div class="grid-overlay"></div>
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+    </div>
+    <div class="banner-content">
+      <a routerLink="/tierlist" class="back-link">← Tier List</a>
+      <div class="hero-header">
+        <div class="hero-image-wrapper">
+          <img [src]="getHeroImage(hero()!.info)" [alt]="hero()!.info.name" />
+        </div>
+        <div class="hero-meta">
+          <h1 class="hero-name">{{ hero()!.info.name }}</h1>
+          <div class="hero-stats-row">
+            <div class="stat-card">
+              <span class="stat-label">Win Rate</span>
+              <span class="stat-value accent-red">{{ hero()!.winRate | number:'1.1-1' }}%</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Pick Rate</span>
+              <span class="stat-value accent-green">{{ hero()!.pickRate | number:'1.1-1' }}%</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">KDA</span>
+              <span class="stat-value">{{ hero()!.avgKills | number:'1.1-1' }} / {{ hero()!.avgDeaths | number:'1.1-1' }} / {{ hero()!.avgAssists | number:'1.1-1' }}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Matchs</span>
+              <span class="stat-value">{{ hero()!.stats.matches | number }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Items Section -->
+  <section class="section section-items">
+    <div class="container">
+      <h2 class="section-title">Items Populaires</h2>
+      <div class="items-grid">
+        @for (item of topItems(); track item.item_id) {
+          <div class="item-card">
+            <div class="item-image-wrapper">
+              @if (item.info?.image_webp) {
+                <img [src]="item.info!.image_webp" [alt]="item.info?.name || 'Item'" loading="lazy" />
+              } @else if (item.info?.image) {
+                <img [src]="item.info!.image" [alt]="item.info?.name || 'Item'" loading="lazy" />
+              } @else {
+                <div class="item-placeholder">?</div>
+              }
+            </div>
+            <div class="item-details">
+              <span class="item-name">{{ item.info?.name || 'Item #' + item.item_id }}</span>
+              <div class="item-stats">
+                <span class="item-winrate" [class.high]="getItemWinRate(item) >= 55" [class.low]="getItemWinRate(item) < 45">
+                  {{ getItemWinRate(item) | number:'1.1-1' }}% WR
+                </span>
+                <span class="item-matches">{{ item.matches | number }} matchs</span>
+              </div>
+              <span class="item-buytime">Achat moyen : {{ formatBuyTime(item.avg_buy_time_s) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Counters Section -->
+  <section class="section section-counters">
+    <div class="container">
+      <h2 class="section-title">Counters</h2>
+      <div class="counters-grid">
+        <div class="counter-column">
+          <h3 class="counter-subtitle weak">Faible contre</h3>
+          <div class="counter-list">
+            @for (counter of weakAgainst(); track counter.enemy_hero_id) {
+              <a class="counter-card" [routerLink]="['/hero', counter.enemy_hero_id]">
+                <div class="counter-hero-img">
+                  @if (counter.enemyInfo) {
+                    <img [src]="getHeroImage(counter.enemyInfo)" [alt]="counter.enemyInfo.name" loading="lazy" />
+                  }
+                </div>
+                <div class="counter-info">
+                  <span class="counter-name">{{ counter.enemyInfo?.name || 'Hero #' + counter.enemy_hero_id }}</span>
+                  <span class="counter-winrate low">{{ counter.winRate | number:'1.1-1' }}% WR</span>
+                </div>
+                <span class="counter-matches">{{ counter.matches_played | number }} matchs</span>
+              </a>
+            }
+          </div>
+        </div>
+        <div class="counter-column">
+          <h3 class="counter-subtitle strong">Fort contre</h3>
+          <div class="counter-list">
+            @for (counter of strongAgainst(); track counter.enemy_hero_id) {
+              <a class="counter-card" [routerLink]="['/hero', counter.enemy_hero_id]">
+                <div class="counter-hero-img">
+                  @if (counter.enemyInfo) {
+                    <img [src]="getHeroImage(counter.enemyInfo)" [alt]="counter.enemyInfo.name" loading="lazy" />
+                  }
+                </div>
+                <div class="counter-info">
+                  <span class="counter-name">{{ counter.enemyInfo?.name || 'Hero #' + counter.enemy_hero_id }}</span>
+                  <span class="counter-winrate high">{{ counter.winRate | number:'1.1-1' }}% WR</span>
+                </div>
+                <span class="counter-matches">{{ counter.matches_played | number }} matchs</span>
+              </a>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Builds Section -->
+  <section class="section section-builds">
+    <div class="container">
+      <h2 class="section-title">Builds Populaires</h2>
+      <div class="builds-list">
+        @for (build of builds(); track build.hero_build.hero_build_id) {
+          <div class="build-card">
+            <div class="build-header">
+              <span class="build-name">{{ build.hero_build.name }}</span>
+              <div class="build-meta">
+                <span class="build-favorites">⭐ {{ build.num_favorites | number }} favoris</span>
+                <span class="build-weekly">📈 {{ build.num_weekly_favorites | number }} cette semaine</span>
+              </div>
+            </div>
+            <div class="build-id">
+              <span class="build-id-label">Build ID:</span>
+              <code class="build-id-value">{{ build.hero_build.hero_build_id }}</code>
+            </div>
+          </div>
+        }
+        @if (builds().length === 0) {
+          <p class="no-data">Aucun build disponible pour ce héros.</p>
+        }
+      </div>
+    </div>
+  </section>
+}

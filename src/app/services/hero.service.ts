@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
-import { HeroStats, HeroInfo, TierHero, Tier, RankInfo, RankFilter } from '../models/hero.model';
+import { HeroStats, HeroInfo, TierHero, Tier, RankInfo, RankFilter, ItemStats, ItemInfo, HeroCounterStats, HeroBuild } from '../models/hero.model';
 
 @Injectable({ providedIn: 'root' })
 export class HeroService {
@@ -103,5 +103,32 @@ export class HeroService {
       || hero.images?.icon_hero_card
       || hero.images?.small_image
       || '';
+  }
+
+  getItemStats(heroId: number): Observable<ItemStats[]> {
+    return this.http.get<ItemStats[]>('https://api.deadlock-api.com/v1/analytics/item-stats', {
+      params: { hero_id: heroId.toString() }
+    });
+  }
+
+  getItems(): Observable<ItemInfo[]> {
+    return this.http.get<ItemInfo[]>('https://assets.deadlock-api.com/v2/items');
+  }
+
+  getHeroCounters(heroId: number): Observable<HeroCounterStats[]> {
+    return this.http.get<HeroCounterStats[]>('https://api.deadlock-api.com/v1/analytics/hero-counter-stats', {
+      params: { include_hero_ids: heroId.toString() }
+    });
+  }
+
+  getHeroBuilds(heroId: number): Observable<HeroBuild[]> {
+    return this.http.get<HeroBuild[]>('https://api.deadlock-api.com/v1/builds', {
+      params: {
+        hero_id: heroId.toString(),
+        sort_by: 'weekly_favorites',
+        limit: '5',
+        only_latest: 'true'
+      }
+    });
   }
 }
