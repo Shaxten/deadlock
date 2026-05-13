@@ -26,6 +26,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/player/player').then(m => m.Player)
   },
   {
+    path: 'guide',
+    loadComponent: () => import('./pages/guide/guide').then(m => m.Guide)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
