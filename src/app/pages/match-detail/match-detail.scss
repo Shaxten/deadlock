@@ -641,6 +641,26 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.analysis-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+
+  .detail-sub-title {
+    margin: 0;
+  }
+}
+
+.analysis-desc {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
+  line-height: 1.4;
+}
+
 // Death Timeline
 .death-timeline {
   display: flex;
