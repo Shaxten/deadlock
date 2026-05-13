@@ -4,7 +4,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { MatchService } from '../../services/match.service';
 import { HeroService } from '../../services/hero.service';
-import { MatchMetadata, MatchPlayer, HeroInfo } from '../../models/hero.model';
+import { PlayerService } from '../../services/player.service';
+import { MatchMetadata, MatchPlayer, HeroInfo, SteamProfile } from '../../models/hero.model';
 
 @Component({
   selector: 'app-match-detail',
@@ -16,13 +17,15 @@ import { MatchMetadata, MatchPlayer, HeroInfo } from '../../models/hero.model';
 export class MatchDetail implements OnInit {
   private matchService = inject(MatchService);
   private heroService = inject(HeroService);
+  private playerService = inject(PlayerService);
   private route = inject(ActivatedRoute);
 
   loading = signal(true);
   error = signal<string | null>(null);
   matchData = signal<MatchMetadata | null>(null);
   heroes = signal<HeroInfo[]>([]);
-  highlightedPlayer = signal<number | null>(null);
+  playerProfiles = signal<Map<number, SteamProfile>>(new Map());
+  selectedPlayer = signal<MatchPlayer | null>(null);
 
   heroMap = computed(() => {
     const map = new Map<number, HeroInfo>();
@@ -49,9 +52,6 @@ export class MatchDetail implements OnInit {
   ngOnInit(): void {
     const matchId = Number(this.route.snapshot.paramMap.get('id'));
     const playerParam = this.route.snapshot.queryParamMap.get('player');
-    if (playerParam) {
-      this.highlightedPlayer.set(Number(playerParam));
-    }
 
     if (!matchId || isNaN(matchId)) {
       this.error.set('Invalid match ID.');
@@ -67,12 +67,47 @@ export class MatchDetail implements OnInit {
         this.matchData.set(match);
         this.heroes.set(heroes);
         this.loading.set(false);
+
+        // Fetch player names
+        const accountIds = match.players
+          .map(p => p.account_id)
+          .filter(id => id > 0);
+
+        if (accountIds.length > 0) {
+          this.playerService.getSteamProfiles(accountIds).subscribe({
+            next: (profiles) => {
+              const map = new Map<number, SteamProfile>();
+              profiles.forEach(p => map.set(p.account_id, p));
+              this.playerProfiles.set(map);
+            }
+          });
+        }
+
+        // Auto-select the highlighted player
+        if (playerParam) {
+          const pid = Number(playerParam);
+          const found = match.players.find(p => p.account_id === pid);
+          if (found) this.selectedPlayer.set(found);
+        }
       },
       error: () => {
-        this.error.set('Failed to load match data. The match may not exist or the API may be unavailable.');
+        this.error.set('Failed to load match data.');
         this.loading.set(false);
       }
     });
+  }
+
+  selectPlayer(player: MatchPlayer): void {
+    this.selectedPlayer.set(player);
+  }
+
+  getPlayerName(accountId: number): string {
+    const profile = this.playerProfiles().get(accountId);
+    return profile?.personaname || `Player ${accountId}`;
+  }
+
+  getPlayerAvatar(accountId: number): string {
+    return this.playerProfiles().get(accountId)?.avatarmedium || '';
   }
 
   getHeroName(heroId: number): string {
@@ -101,11 +136,17 @@ export class MatchDetail implements OnInit {
     });
   }
 
-  isHighlighted(player: MatchPlayer): boolean {
-    return this.highlightedPlayer() === player.account_id;
+  isSelected(player: MatchPlayer): boolean {
+    return this.selectedPlayer()?.account_id === player.account_id;
   }
 
   isWinningTeam(team: number): boolean {
     return this.winningTeam() === team;
+  }
+
+  selectedPlayerWon(): boolean {
+    const p = this.selectedPlayer();
+    if (!p) return false;
+    return p.team === this.winningTeam();
   }
 }

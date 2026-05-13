@@ -1,5 +1,4 @@
 <div class="match-detail-page">
-  <!-- Loading -->
   @if (loading()) {
     <div class="loading-container">
       <div class="spinner"></div>
@@ -7,7 +6,6 @@
     </div>
   }
 
-  <!-- Error -->
   @if (error()) {
     <div class="error-container">
       <p class="error-message">{{ error() }}</p>
@@ -15,10 +13,10 @@
     </div>
   }
 
-  <!-- Match Data -->
   @if (matchData(); as match) {
     <section class="match-header">
       <div class="match-header-content">
+        <a routerLink="/player" class="back-link">← Back</a>
         <h1 class="match-title">Match Details</h1>
         <div class="match-info-bar">
           <span class="match-duration">
@@ -36,6 +34,7 @@
     @if (team0().length > 0 || team1().length > 0) {
     <section class="teams-section">
       <div class="teams-container">
+        <!-- Team 0 -->
         <div class="team-panel" [class.winner]="isWinningTeam(0)" [class.loser]="!isWinningTeam(0)">
           <div class="team-header">
             <h2 class="team-name">Team Amber</h2>
@@ -44,16 +43,16 @@
             </span>
           </div>
           <div class="team-players">
-            @for (player of team0(); track player.account_id) {
-              <div class="player-row" [class.highlighted]="isHighlighted(player)">
+            @for (player of team0(); track player.player_slot) {
+              <div class="player-row" [class.selected]="isSelected(player)" (click)="selectPlayer(player)">
                 <div class="player-hero">
                   @if (getHeroImage(player.hero_id)) {
                     <img [src]="getHeroImage(player.hero_id)" [alt]="getHeroName(player.hero_id)" class="player-hero-img" />
                   }
                 </div>
                 <div class="player-info">
-                  <span class="player-hero-name">{{ getHeroName(player.hero_id) }}</span>
-                  <span class="player-level">Lv. {{ player.player_level }}</span>
+                  <span class="player-name">{{ getPlayerName(player.account_id) }}</span>
+                  <span class="player-hero-label">{{ getHeroName(player.hero_id) }}</span>
                 </div>
                 <div class="player-stats">
                   <span class="player-kda">{{ player.kills }}/{{ player.deaths }}/{{ player.assists }}</span>
@@ -61,13 +60,13 @@
                 </div>
                 <div class="player-stats">
                   <span class="player-networth">{{ player.net_worth | number }}</span>
-                  <span class="player-stat-label">Net Worth</span>
+                  <span class="player-stat-label">Souls</span>
                 </div>
-                <div class="player-stats">
+                <div class="player-stats hide-mobile">
                   <span class="player-lasthits">{{ player.last_hits }}/{{ player.denies }}</span>
                   <span class="player-stat-label">LH/DN</span>
                 </div>
-                <div class="player-stats">
+                <div class="player-stats hide-mobile">
                   <span class="player-damage">{{ player.player_damage | number }}</span>
                   <span class="player-stat-label">Damage</span>
                 </div>
@@ -85,16 +84,16 @@
             </span>
           </div>
           <div class="team-players">
-            @for (player of team1(); track player.account_id) {
-              <div class="player-row" [class.highlighted]="isHighlighted(player)">
+            @for (player of team1(); track player.player_slot) {
+              <div class="player-row" [class.selected]="isSelected(player)" (click)="selectPlayer(player)">
                 <div class="player-hero">
                   @if (getHeroImage(player.hero_id)) {
                     <img [src]="getHeroImage(player.hero_id)" [alt]="getHeroName(player.hero_id)" class="player-hero-img" />
                   }
                 </div>
                 <div class="player-info">
-                  <span class="player-hero-name">{{ getHeroName(player.hero_id) }}</span>
-                  <span class="player-level">Lv. {{ player.player_level }}</span>
+                  <span class="player-name">{{ getPlayerName(player.account_id) }}</span>
+                  <span class="player-hero-label">{{ getHeroName(player.hero_id) }}</span>
                 </div>
                 <div class="player-stats">
                   <span class="player-kda">{{ player.kills }}/{{ player.deaths }}/{{ player.assists }}</span>
@@ -102,13 +101,13 @@
                 </div>
                 <div class="player-stats">
                   <span class="player-networth">{{ player.net_worth | number }}</span>
-                  <span class="player-stat-label">Net Worth</span>
+                  <span class="player-stat-label">Souls</span>
                 </div>
-                <div class="player-stats">
+                <div class="player-stats hide-mobile">
                   <span class="player-lasthits">{{ player.last_hits }}/{{ player.denies }}</span>
                   <span class="player-stat-label">LH/DN</span>
                 </div>
-                <div class="player-stats">
+                <div class="player-stats hide-mobile">
                   <span class="player-damage">{{ player.player_damage | number }}</span>
                   <span class="player-stat-label">Damage</span>
                 </div>
@@ -118,6 +117,86 @@
         </div>
       </div>
     </section>
+    }
+
+    <!-- Selected Player Details -->
+    @if (selectedPlayer(); as sp) {
+      <section class="section section-player-detail">
+        <div class="container">
+          <h3 class="section-title">Player Details</h3>
+          <div class="detail-card">
+            <div class="detail-header">
+              @if (getPlayerAvatar(sp.account_id)) {
+                <img [src]="getPlayerAvatar(sp.account_id)" class="detail-avatar" alt="" />
+              }
+              <div class="detail-header-info">
+                <span class="detail-player-name">{{ getPlayerName(sp.account_id) }}</span>
+                <div class="detail-hero-row">
+                  @if (getHeroImage(sp.hero_id)) {
+                    <img [src]="getHeroImage(sp.hero_id)" class="detail-hero-icon" alt="" />
+                  }
+                  <span class="detail-hero-name">{{ getHeroName(sp.hero_id) }}</span>
+                  <span class="detail-level">Lv. {{ sp.player_level }}</span>
+                </div>
+                <span class="detail-result" [class.win]="selectedPlayerWon()" [class.loss]="!selectedPlayerWon()">
+                  {{ selectedPlayerWon() ? 'VICTORY' : 'DEFEAT' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="detail-stats-grid">
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.kills }}</span>
+                <span class="detail-stat-label">Kills</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.deaths }}</span>
+                <span class="detail-stat-label">Deaths</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.assists }}</span>
+                <span class="detail-stat-label">Assists</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.net_worth | number }}</span>
+                <span class="detail-stat-label">Net Worth</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.last_hits }}</span>
+                <span class="detail-stat-label">Last Hits</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.denies }}</span>
+                <span class="detail-stat-label">Denies</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.player_damage | number }}</span>
+                <span class="detail-stat-label">Player Damage</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.damage_taken | number }}</span>
+                <span class="detail-stat-label">Damage Taken</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.player_healing | number }}</span>
+                <span class="detail-stat-label">Healing</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.gold_player | number }}</span>
+                <span class="detail-stat-label">Player Gold</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.gold_boss | number }}</span>
+                <span class="detail-stat-label">Boss Gold</span>
+              </div>
+              <div class="detail-stat">
+                <span class="detail-stat-value">{{ sp.assigned_lane }}</span>
+                <span class="detail-stat-label">Lane</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     }
   }
 </div>
