@@ -707,71 +707,106 @@
   letter-spacing: 0.5px;
 }
 
-// Soul Timeline
-.soul-timeline {
+// Soul Graph
+.soul-graph-container {
   display: flex;
-  flex-direction: column;
   gap: 0.5rem;
+  align-items: stretch;
 }
 
-.soul-entry {
+.soul-graph-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.legend-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--color-primary);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-
-  &.weak {
-    border-color: rgba(255, 70, 85, 0.3);
-    background: rgba(255, 70, 85, 0.05);
-  }
-}
-
-.soul-period {
+  gap: 0.4rem;
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.6);
-  min-width: 90px;
-  flex-shrink: 0;
 }
 
-.soul-bar-wrapper {
-  flex: 1;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.soul-bar {
-  height: 100%;
+.legend-line {
+  width: 16px;
+  height: 2px;
   background: var(--color-accent);
-  border-radius: 4px;
-  transition: width 0.5s ease-out;
+  border-radius: 1px;
 
-  .weak & {
-    background: var(--color-secondary);
+  &.dashed {
+    background: none;
+    border-top: 2px dashed rgba(255, 255, 255, 0.4);
   }
 }
 
-.soul-value {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.8);
-  min-width: 60px;
-  text-align: right;
-  flex-shrink: 0;
+.legend-actual .legend-line { background: var(--color-accent); }
+
+.soul-graph {
+  flex: 1;
+  position: relative;
+  padding-top: 1.5rem;
 }
 
-.soul-flag {
+.graph-svg {
+  width: 100%;
+  height: 180px;
+  background: var(--color-primary);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.grid-line {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 0.3;
+}
+
+.graph-line {
+  fill: none;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+
+  &.actual {
+    stroke: var(--color-accent);
+    filter: drop-shadow(0 0 3px rgba(0, 212, 170, 0.4));
+  }
+
+  &.expected {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-dasharray: 4 3;
+    stroke-width: 1;
+  }
+}
+
+.graph-x-labels {
+  position: relative;
+  height: 20px;
+  margin-top: 0.4rem;
+}
+
+.graph-label {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.soul-graph-values {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 0 20px;
+  min-width: 50px;
+  align-items: flex-end;
+}
+
+.graph-value {
+  font-family: var(--font-display);
   font-size: 0.6rem;
-  color: var(--color-secondary);
-  background: rgba(255, 70, 85, 0.15);
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  font-weight: 600;
-  text-transform: uppercase;
-  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.4);
 }

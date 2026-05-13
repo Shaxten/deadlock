@@ -224,4 +224,61 @@ export class MatchDetail implements OnInit {
 
     return segments;
   }
+
+  // Soul graph data - actual vs expected net worth over time
+  getSoulGraphData(player: MatchPlayer): { points: { time: number; actual: number; expected: number }[]; maxSouls: number; maxTime: number } {
+    const timeline = player.stats_timeline;
+    if (timeline.length < 2) return { points: [], maxSouls: 0, maxTime: 0 };
+
+    const firstTime = timeline[0].time_stamp_s;
+    const lastTime = timeline[timeline.length - 1].time_stamp_s;
+    const lastNw = timeline[timeline.length - 1].net_worth;
+    const totalDuration = lastTime - firstTime;
+
+    const points = timeline.map(s => {
+      const elapsed = s.time_stamp_s - firstTime;
+      const expected = totalDuration > 0 ? (elapsed / totalDuration) * lastNw : 0;
+      return {
+        time: s.time_stamp_s,
+        actual: s.net_worth,
+        expected: Math.round(expected)
+      };
+    });
+
+    const maxSouls = Math.max(...points.map(p => Math.max(p.actual, p.expected)), 1);
+    const maxTime = lastTime;
+
+    return { points, maxSouls, maxTime };
+  }
+
+  getSoulGraphPath(player: MatchPlayer, type: 'actual' | 'expected'): string {
+    const { points, maxSouls, maxTime } = this.getSoulGraphData(player);
+    if (points.length < 2) return '';
+
+    const firstTime = points[0].time;
+    const width = 100;
+    const height = 100;
+
+    return points.map((p, i) => {
+      const x = ((p.time - firstTime) / (maxTime - firstTime)) * width;
+      const y = height - ((type === 'actual' ? p.actual : p.expected) / maxSouls) * height;
+      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join(' ');
+  }
+
+  getSoulGraphLabels(player: MatchPlayer): { time: string; x: number }[] {
+    const { points, maxTime } = this.getSoulGraphData(player);
+    if (points.length < 2) return [];
+
+    const firstTime = points[0].time;
+    const totalTime = maxTime - firstTime;
+    const step = Math.ceil(points.length / 5);
+
+    return points
+      .filter((_, i) => i % step === 0 || i === points.length - 1)
+      .map(p => ({
+        time: `${Math.floor(p.time / 60)}m`,
+        x: ((p.time - firstTime) / totalTime) * 100
+      }));
+  }
 }

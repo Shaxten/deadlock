@@ -222,26 +222,40 @@
               </div>
             }
 
-            <!-- Soul Progression -->
-            @if (getSoulAnalysis(sp).length > 0) {
+            <!-- Soul Progression Graph -->
+            @if (getSoulGraphData(sp).points.length > 1) {
               <div class="detail-analysis">
                 <div class="analysis-header">
-                  <h4 class="detail-sub-title">Soul Gain by Period</h4>
-                  <span class="analysis-desc">Periods flagged "Low" show soul income below 60% of the player's match average — likely due to deaths, roaming without farming, or losing lane pressure.</span>
+                  <h4 class="detail-sub-title">Soul Gain</h4>
+                  <span class="analysis-desc">Green line = actual souls earned. Dashed line = expected (linear pace). Gaps below the expected line indicate periods of low farm.</span>
                 </div>
-                <div class="soul-timeline">
-                  @for (seg of getSoulAnalysis(sp); track seg.period) {
-                    <div class="soul-entry" [class.weak]="seg.isWeak">
-                      <span class="soul-period">{{ seg.period }}</span>
-                      <div class="soul-bar-wrapper">
-                        <div class="soul-bar" [style.width.%]="seg.barWidth"></div>
-                      </div>
-                      <span class="soul-value">{{ seg.soulsPerMin | number:'1.0-0' }} spm</span>
-                      @if (seg.isWeak) {
-                        <span class="soul-flag">Low</span>
+                <div class="soul-graph-container">
+                  <div class="soul-graph-legend">
+                    <span class="legend-item legend-actual"><span class="legend-line"></span> Actual</span>
+                    <span class="legend-item legend-expected"><span class="legend-line dashed"></span> Expected</span>
+                  </div>
+                  <div class="soul-graph">
+                    <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="graph-svg">
+                      <!-- Grid lines -->
+                      <line x1="0" y1="25" x2="100" y2="25" class="grid-line" />
+                      <line x1="0" y1="50" x2="100" y2="50" class="grid-line" />
+                      <line x1="0" y1="75" x2="100" y2="75" class="grid-line" />
+                      <!-- Expected line (dashed) -->
+                      <path [attr.d]="getSoulGraphPath(sp, 'expected')" class="graph-line expected" />
+                      <!-- Actual line -->
+                      <path [attr.d]="getSoulGraphPath(sp, 'actual')" class="graph-line actual" />
+                    </svg>
+                    <div class="graph-x-labels">
+                      @for (label of getSoulGraphLabels(sp); track label.time) {
+                        <span class="graph-label" [style.left.%]="label.x">{{ label.time }}</span>
                       }
                     </div>
-                  }
+                  </div>
+                  <div class="soul-graph-values">
+                    <span class="graph-value top">{{ getSoulGraphData(sp).maxSouls | number }}</span>
+                    <span class="graph-value mid">{{ (getSoulGraphData(sp).maxSouls / 2) | number:'1.0-0' }}</span>
+                    <span class="graph-value bottom">0</span>
+                  </div>
                 </div>
               </div>
             }
