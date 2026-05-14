@@ -422,6 +422,76 @@
   background: var(--color-light);
 }
 
+.builds-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  .section-title {
+    margin-bottom: 0;
+  }
+}
+
+.builds-lang-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .lang-flag { font-size: 0.9rem; }
+
+  &:hover {
+    border-color: rgba(255, 70, 85, 0.3);
+    color: white;
+  }
+
+  &.active {
+    border-color: var(--color-secondary);
+    background: rgba(255, 70, 85, 0.12);
+    color: white;
+  }
+}
+
+.builds-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+}
+
+.spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 70, 85, 0.2);
+  border-top-color: var(--color-secondary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .builds-list {
   display: flex;
   flex-direction: column;

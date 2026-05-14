@@ -133,7 +133,28 @@
   <!-- Builds Section -->
   <section class="section section-builds">
     <div class="container">
-      <h2 class="section-title">Popular Builds</h2>
+      <div class="builds-header">
+        <h2 class="section-title">Popular Builds</h2>
+        <div class="builds-lang-filter">
+          @for (lang of languages; track lang.value) {
+            <button
+              class="lang-btn"
+              [class.active]="selectedLanguage() === lang.value"
+              (click)="selectLanguage(lang.value)">
+              <span class="lang-flag">{{ lang.flag }}</span>
+              <span class="lang-label">{{ lang.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (buildsLoading()) {
+        <div class="builds-loading">
+          <div class="spinner-small"></div>
+          <span>Loading builds...</span>
+        </div>
+      }
+
       <div class="builds-list">
         @for (build of builds(); track build.hero_build.hero_build_id) {
           <div class="build-card" [class.expanded]="isBuildExpanded(build.hero_build.hero_build_id)">

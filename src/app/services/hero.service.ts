@@ -121,14 +121,14 @@ export class HeroService {
     });
   }
 
-  getHeroBuilds(heroId: number): Observable<HeroBuild[]> {
-    return this.http.get<HeroBuild[]>('https://api.deadlock-api.com/v1/builds', {
-      params: {
-        hero_id: heroId.toString(),
-        sort_by: 'weekly_favorites',
-        limit: '5',
-        only_latest: 'true'
-      }
-    });
+  getHeroBuilds(heroId: number, language?: string): Observable<HeroBuild[]> {
+    const params: any = {
+      hero_id: heroId.toString(),
+      sort_by: 'weekly_favorites',
+      limit: '5',
+      only_latest: 'true'
+    };
+    if (language) params.build_language = language;
+    return this.http.get<HeroBuild[]>('https://api.deadlock-api.com/v1/builds', { params });
   }
 }

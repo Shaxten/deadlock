@@ -21,6 +21,24 @@ export class HeroDetail implements OnInit {
   builds = signal<HeroBuild[]>([]);
   allHeroes = signal<HeroInfo[]>([]);
   allItems = signal<Map<number, ItemInfo>>(new Map());
+  buildsLoading = signal(false);
+  selectedLanguage = signal<string>('');
+
+  readonly languages: { label: string; value: string; flag: string }[] = [
+    { label: 'All', value: '', flag: '🌍' },
+    { label: 'English', value: 'English', flag: '🇺🇸' },
+    { label: 'French', value: 'French', flag: '🇫🇷' },
+    { label: 'German', value: 'German', flag: '🇩🇪' },
+    { label: 'Spanish', value: 'SpanishSpain', flag: '🇪🇸' },
+    { label: 'Lat. Spanish', value: 'SpanishLatinAmerica', flag: '🇲🇽' },
+    { label: 'Portuguese', value: 'PortugueseBrazil', flag: '🇧🇷' },
+    { label: 'Russian', value: 'Russian', flag: '🇷🇺' },
+    { label: 'Chinese', value: 'ChineseSimplified', flag: '🇨🇳' },
+    { label: 'Japanese', value: 'Japanese', flag: '🇯🇵' },
+    { label: 'Korean', value: 'Korean', flag: '🇰🇷' },
+    { label: 'Polish', value: 'Polish', flag: '🇵🇱' },
+    { label: 'Turkish', value: 'Turkish', flag: '🇹🇷' },
+  ];
 
   loading = signal(true);
   error = signal('');
@@ -128,6 +146,21 @@ export class HeroDetail implements OnInit {
   getItemWinRate(item: ItemStats): number {
     if (!item.matches || item.matches === 0) return 0;
     return (item.wins / item.matches) * 100;
+  }
+
+  selectLanguage(lang: string): void {
+    this.selectedLanguage.set(lang);
+    this.expandedBuilds.set(new Set());
+    const heroId = this.hero()?.info.id;
+    if (!heroId) return;
+    this.buildsLoading.set(true);
+    this.heroService.getHeroBuilds(heroId, lang || undefined).subscribe({
+      next: (builds) => {
+        this.builds.set(builds);
+        this.buildsLoading.set(false);
+      },
+      error: () => this.buildsLoading.set(false)
+    });
   }
 
   expandedBuilds = signal<Set<number>>(new Set());
