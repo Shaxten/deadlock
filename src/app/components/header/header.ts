@@ -10,6 +10,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class Header {
   menuOpen = false;
   scrolled = false;
+  guideOpen = false;
 
   @HostListener('window:scroll')
   onScroll(): void {
