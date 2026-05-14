@@ -19,7 +19,7 @@
         <li class="nav-dropdown" [class.open]="guideOpen" (mouseenter)="guideOpen = true" (mouseleave)="guideOpen = false">
           <button class="nav-dropdown-toggle" (click)="guideOpen = !guideOpen">Guide <span class="dropdown-arrow">▾</span></button>
           <ul class="dropdown-menu">
-            <li><a routerLink="/guide" routerLinkActive="active" (click)="menuOpen = false; guideOpen = false">Map Timers</a></li>
+            <li><a routerLink="/guide" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false; guideOpen = false">Map Timers</a></li>
             <li><a routerLink="/guide/structures" routerLinkActive="active" (click)="menuOpen = false; guideOpen = false">Structures</a></li>
           </ul>
         </li>
