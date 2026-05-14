@@ -130,20 +130,58 @@ export class HeroDetail implements OnInit {
     return (item.wins / item.matches) * 100;
   }
 
+  expandedBuilds = signal<Set<number>>(new Set());
+
+  toggleBuild(buildId: number): void {
+    const current = new Set(this.expandedBuilds());
+    if (current.has(buildId)) {
+      current.delete(buildId);
+    } else {
+      current.add(buildId);
+    }
+    this.expandedBuilds.set(current);
+  }
+
+  isBuildExpanded(buildId: number): boolean {
+    return this.expandedBuilds().has(buildId);
+  }
+
+  getBuildCategories(build: HeroBuild): { name: string; items: ItemInfo[]; abilities: ItemInfo[] }[] {
+    const itemMap = this.allItems();
+    return build.hero_build.details.mod_categories
+      .filter(cat => cat.mods && cat.mods.length > 0)
+      .map(cat => {
+        const items: ItemInfo[] = [];
+        const abilities: ItemInfo[] = [];
+        for (const mod of cat.mods || []) {
+          const info = itemMap.get(mod.ability_id);
+          if (!info) continue;
+          if (info.type === 'upgrade') {
+            items.push(info);
+          } else if (info.type === 'ability') {
+            abilities.push(info);
+          }
+        }
+        return { name: cat.name, items, abilities };
+      })
+      .filter(cat => cat.items.length > 0 || cat.abilities.length > 0);
+  }
+
   getBuildItems(build: HeroBuild): ItemInfo[] {
     const itemMap = this.allItems();
-    const itemIds: number[] = [];
+    const items: ItemInfo[] = [];
     for (const category of build.hero_build.details.mod_categories) {
       if (category.mods) {
         for (const mod of category.mods) {
-          if (mod.ability_id && itemMap.has(mod.ability_id)) {
-            itemIds.push(mod.ability_id);
+          const info = itemMap.get(mod.ability_id);
+          if (info && info.type === 'upgrade') {
+            items.push(info);
           }
-          if (itemIds.length >= 6) break;
+          if (items.length >= 6) break;
         }
       }
-      if (itemIds.length >= 6) break;
+      if (items.length >= 6) break;
     }
-    return itemIds.map(id => itemMap.get(id)!).filter(Boolean);
+    return items;
   }
 }

@@ -136,25 +136,62 @@
       <h2 class="section-title">Popular Builds</h2>
       <div class="builds-list">
         @for (build of builds(); track build.hero_build.hero_build_id) {
-          <div class="build-card">
+          <div class="build-card" [class.expanded]="isBuildExpanded(build.hero_build.hero_build_id)">
             <div class="build-header">
               <span class="build-name">{{ build.hero_build.name }}</span>
               <div class="build-meta">
                 <span class="build-favorites">⭐ {{ build.num_favorites | number }} favorites</span>
                 <span class="build-weekly">📈 {{ build.num_weekly_favorites | number }} this week</span>
               </div>
+              <button class="build-expand-btn" (click)="toggleBuild(build.hero_build.hero_build_id)">
+                {{ isBuildExpanded(build.hero_build.hero_build_id) ? 'Collapse ▲' : 'Full Build ▼' }}
+              </button>
             </div>
-            <div class="build-items">
-              @for (item of getBuildItems(build); track item.id) {
-                <div class="build-item" [class.slot-weapon]="item.item_slot_type === 'weapon'" [class.slot-spirit]="item.item_slot_type === 'spirit'" [class.slot-vitality]="item.item_slot_type === 'vitality'">
-                  <img [src]="item.shop_image_webp || item.image_webp || item.image" [alt]="item.name" loading="lazy" />
-                  <span class="build-item-name">{{ item.name }}</span>
-                </div>
-              }
-              @if (getBuildItems(build).length === 0) {
-                <span class="no-items">No item data</span>
-              }
-            </div>
+
+            <!-- Collapsed: first 6 items preview -->
+            @if (!isBuildExpanded(build.hero_build.hero_build_id)) {
+              <div class="build-items">
+                @for (item of getBuildItems(build); track item.id) {
+                  <div class="build-item" [class.slot-weapon]="item.item_slot_type === 'weapon'" [class.slot-spirit]="item.item_slot_type === 'spirit'" [class.slot-vitality]="item.item_slot_type === 'vitality'">
+                    <img [src]="item.shop_image_webp || item.image_webp || item.image" [alt]="item.name" loading="lazy" />
+                    <span class="build-item-name">{{ item.name }}</span>
+                  </div>
+                }
+                @if (getBuildItems(build).length === 0) {
+                  <span class="no-items">No item data</span>
+                }
+              </div>
+            }
+
+            <!-- Expanded: full build by category -->
+            @if (isBuildExpanded(build.hero_build.hero_build_id)) {
+              <div class="build-full">
+                @for (cat of getBuildCategories(build); track cat.name) {
+                  <div class="build-category">
+                    <h4 class="build-category-name">{{ cat.name }}</h4>
+                    <div class="build-category-items">
+                      @for (item of cat.items; track item.id) {
+                        <div class="build-item-full" [class.slot-weapon]="item.item_slot_type === 'weapon'" [class.slot-spirit]="item.item_slot_type === 'spirit'" [class.slot-vitality]="item.item_slot_type === 'vitality'">
+                          <img [src]="item.shop_image_webp || item.image_webp || item.image" [alt]="item.name" loading="lazy" />
+                          <span class="build-item-full-name">{{ item.name }}</span>
+                        </div>
+                      }
+                      @for (ability of cat.abilities; track ability.id) {
+                        <div class="build-ability">
+                          <img [src]="ability.image_webp || ability.image" [alt]="ability.name" loading="lazy" />
+                          <span class="build-ability-name">{{ ability.name }}</span>
+                          <span class="build-ability-badge">Ability</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (getBuildCategories(build).length === 0) {
+                  <p class="no-data">No detailed build data available.</p>
+                }
+              </div>
+            }
+
             <div class="build-id">
               <span class="build-id-label">Build ID:</span>
               <code class="build-id-value">{{ build.hero_build.hero_build_id }}</code>
