@@ -83,8 +83,13 @@
                 <span class="timer-label">Heal Pack</span>
                 <span class="timer-value">12% missing HP + 150 + 2/min</span>
               </div>
+              <div class="timer-row">
+                <span class="timer-label">Heals Troopers?</span>
+                <span class="timer-value">✅ Yes (small amount)</span>
+              </div>
             </div>
-            <p class="timer-note">Drops a heal pack on death. Heal scales with game time. Present in all waves from the start.</p>
+            <p class="timer-note">Drops a heal pack on death in a 35m radius. When a player picks it up, it heals nearby heroes AND gives a small heal to nearby allied troopers. The pack cannot be picked up by the Medic's own team. Heal scales with game time.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Trooper" target="_blank" rel="noopener">deadlock.wiki</a></div>
           </div>
         </div>
 
@@ -131,8 +136,17 @@
                 <span class="timer-label">Growth</span>
                 <span class="timer-value">+1.16/min per trooper</span>
               </div>
+              <div class="timer-row">
+                <span class="timer-label">Melee kill</span>
+                <span class="timer-value">100% on kill (no orb)</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Ranged kill</span>
+                <span class="timer-value">60% ground orb + 40% floating</span>
+              </div>
             </div>
-            <p class="timer-note">Trooper soul value increases over time. Securing last hits is critical for economy.</p>
+            <p class="timer-note">Killing with melee gives 100% souls instantly. Ranged kills drop a ground orb (60%) and a floating orb (40%) that can be confirmed or denied. Souls split among nearby allies.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Trooper" target="_blank" rel="noopener">deadlock.wiki</a></div>
           </div>
         </div>
 
@@ -173,19 +187,59 @@
             <h3>Lane Guardian</h3>
             <div class="timer-details">
               <div class="timer-row">
-                <span class="timer-label">Role</span>
-                <span class="timer-value">Protects lane path</span>
+                <span class="timer-label">Health</span>
+                <span class="timer-value">5,500 HP</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Soul Bounty</span>
+                <span class="timer-value">1,500 souls (team-wide)</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">DPS</span>
+                <span class="timer-value">116 (laser)</span>
               </div>
               <div class="timer-row">
                 <span class="timer-label">Bullet Resistance</span>
                 <span class="timer-value">10%</span>
               </div>
               <div class="timer-row">
-                <span class="timer-label">Backdoor Protection</span>
-                <span class="timer-value">Extra resist without creeps</span>
+                <span class="timer-label">Damage Resist</span>
+                <span class="timer-value">75% → -50% over 12 min</span>
               </div>
             </div>
-            <p class="timer-note">Must be destroyed to advance through the lane. Has backdoor protection that grants extra resistance when no friendly creeps are nearby. Focus them when your wave is pushing.</p>
+            <p class="timer-note">Immune when no enemies within 24m. Starts with 75% damage resist that decays to -50% by 12 min — much easier to kill late game. Can be parried when it melees (stuns it for 2s). Bounty split among all alive allies.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Guardian" target="_blank" rel="noopener">deadlock.wiki</a></div>
+          </div>
+        </div>
+
+        <div class="timer-card">
+          <div class="timer-icon">🏰</div>
+          <div class="timer-content">
+            <h3>Base Guardian</h3>
+            <div class="timer-details">
+              <div class="timer-row">
+                <span class="timer-label">Health</span>
+                <span class="timer-value">4,000 HP</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Soul Bounty</span>
+                <span class="timer-value">1,000 souls (team-wide)</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Bullet Resist (solo)</span>
+                <span class="timer-value">40%</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Bullet Resist (6 heroes)</span>
+                <span class="timer-value">-80%</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">On Kill</span>
+                <span class="timer-value">Zipline speed boost</span>
+              </div>
+            </div>
+            <p class="timer-note">Bullet resist drops by 20% per nearby enemy hero — bring the whole team. Killing both base guardians in a lane grants a permanent zipline speed boost. Regenerates 65 HP/s during backdoor protection.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Guardian" target="_blank" rel="noopener">deadlock.wiki</a></div>
           </div>
         </div>
       </div>
@@ -198,47 +252,46 @@
       <h2 class="section-title">Walkers</h2>
 
       <div class="structures-grid">
-        <div class="timer-card">
+        <div class="timer-card highlight">
           <div class="timer-icon">🤖</div>
           <div class="timer-content">
-            <h3>Tier 1 Walker (Outer)</h3>
+            <h3>Walker</h3>
             <div class="timer-details">
               <div class="timer-row">
-                <span class="timer-label">Position</span>
-                <span class="timer-value">Outer lane</span>
+                <span class="timer-label">HP (1st Walker)</span>
+                <span class="timer-value">6,000 HP</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">HP (2 remaining)</span>
+                <span class="timer-value">9,000 HP</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">HP (last Walker)</span>
+                <span class="timer-value">12,000 HP</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Soul Bounty</span>
+                <span class="timer-value">4,000 souls</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Bounty Split</span>
+                <span class="timer-value">40% nearby / 60% whole team</span>
               </div>
               <div class="timer-row">
                 <span class="timer-label">Bullet Resistance</span>
                 <span class="timer-value">25%</span>
               </div>
               <div class="timer-row">
-                <span class="timer-label">Backdoor Protection</span>
-                <span class="timer-value">Yes</span>
+                <span class="timer-label">Damage Resist</span>
+                <span class="timer-value">65% → -65% over 18 min</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">On Kill</span>
+                <span class="timer-value">+1 Extra Item Slot (team)</span>
               </div>
             </div>
-            <p class="timer-note">First line of defense in each lane. Must be destroyed before pushing deeper. Deals heavy damage to heroes in range.</p>
-          </div>
-        </div>
-
-        <div class="timer-card">
-          <div class="timer-icon">🦾</div>
-          <div class="timer-content">
-            <h3>Tier 2 Walker (Inner)</h3>
-            <div class="timer-details">
-              <div class="timer-row">
-                <span class="timer-label">Position</span>
-                <span class="timer-value">Inner lane</span>
-              </div>
-              <div class="timer-row">
-                <span class="timer-label">Bullet Resistance</span>
-                <span class="timer-value">25%</span>
-              </div>
-              <div class="timer-row">
-                <span class="timer-label">Backdoor Protection</span>
-                <span class="timer-value">Yes</span>
-              </div>
-            </div>
-            <p class="timer-note">Stronger than Tier 1. Guards the path to shrines. Backdoor protection activates when no friendly creeps are nearby, making solo pushes very difficult.</p>
+            <p class="timer-note">Walkers get stronger as others die. Attacks: Fire Beam (2% max HP/s), Stomp (350 + 15% max HP, 2s stun in 15m), Fireballs (6 projectiles, 200 dmg each). Provides nearby allies +15% Bullet and Spirit Resist. Backdoor protection: 65% damage reduction + 65 HP/s regen.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Walker" target="_blank" rel="noopener">deadlock.wiki</a></div>
           </div>
         </div>
       </div>
@@ -261,15 +314,24 @@
                 <span class="timer-value">5,000 HP</span>
               </div>
               <div class="timer-row">
-                <span class="timer-label">Bullet Resistance</span>
-                <span class="timer-value">10%</span>
+                <span class="timer-label">Soul Bounty</span>
+                <span class="timer-value">2,000 souls</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Bullet Resist (solo)</span>
+                <span class="timer-value">60%</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Bullet Resist (6 heroes)</span>
+                <span class="timer-value">-60%</span>
               </div>
               <div class="timer-row">
                 <span class="timer-label">On Destroy</span>
-                <span class="timer-value">Triggers Super Troopers</span>
+                <span class="timer-value">Super Troopers in that lane</span>
               </div>
             </div>
-            <p class="timer-note">Destroying triggers Super Troopers in that lane. Blue lane gets Super Troopers when either shrine falls.</p>
+            <p class="timer-note">Bullet resist drops 20% per nearby enemy hero — attack as a team. Immune to damage from more than 11m away. Patron defends it with a beam that curses nearby heroes.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Shrine" target="_blank" rel="noopener">deadlock.wiki</a></div>
           </div>
         </div>
 
@@ -283,15 +345,20 @@
                 <span class="timer-value">10,000 HP</span>
               </div>
               <div class="timer-row">
-                <span class="timer-label">Bullet Resistance</span>
-                <span class="timer-value">10%</span>
+                <span class="timer-label">Soul Bounty</span>
+                <span class="timer-value">2,000 souls</span>
+              </div>
+              <div class="timer-row">
+                <span class="timer-label">Bullet Resist (solo)</span>
+                <span class="timer-value">60%</span>
               </div>
               <div class="timer-row">
                 <span class="timer-label">On Destroy</span>
-                <span class="timer-value">Unlocks Patron</span>
+                <span class="timer-value">Patron becomes vulnerable</span>
               </div>
             </div>
-            <p class="timer-note">Much tankier than the first shrine. Both shrines must be destroyed before the Patron can be damaged. Coordinate team pushes to take it down.</p>
+            <p class="timer-note">HP updates to 10,000 after the first shrine dies. Both shrines must be destroyed before the Patron can be damaged. Blue lane gets Super Troopers when either shrine falls.</p>
+            <div class="timer-source">Source: <a href="https://deadlock.wiki/Shrine" target="_blank" rel="noopener">deadlock.wiki</a></div>
           </div>
         </div>
       </div>
