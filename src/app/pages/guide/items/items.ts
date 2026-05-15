@@ -51,16 +51,13 @@ export class Items implements OnInit {
       items = items.filter(i => {
         if (i.name.toLowerCase().includes(query)) return true;
         if (i.item_slot_type?.toLowerCase().includes(query)) return true;
-        // Search in properties
-        if (i.properties) {
-          const propsStr = JSON.stringify(i.properties).toLowerCase();
-          if (propsStr.includes(query)) return true;
-          // Also search readable property names
-          for (const key of Object.keys(i.properties)) {
-            if (this.formatPropertyName(key).toLowerCase().includes(query)) return true;
-          }
-        }
-        // Search in description
+        // Search only in the properties that are actually displayed (non-zero, with labels)
+        const visibleProps = this.getKeyProperties(i);
+        if (visibleProps.some(p =>
+          p.name.toLowerCase().includes(query) ||
+          p.value.toLowerCase().includes(query)
+        )) return true;
+        // Search in description (plain text)
         const desc = this.getDescription(i);
         if (desc.toLowerCase().includes(query)) return true;
         return false;
