@@ -26,8 +26,18 @@ export class Items implements OnInit {
     const slot = this.selectedSlot();
     const tier = this.selectedTier();
 
-    // Only show purchasable upgrades (exclude T5 special items)
-    items = items.filter(i => i.type === 'upgrade' && i.cost && i.cost > 0 && (i.item_tier ?? 0) < 5);
+    // Only show real purchasable upgrades — exclude internal/disabled items
+    items = items.filter(i =>
+      i.type === 'upgrade' &&
+      i.cost && i.cost > 0 &&
+      (i.item_tier ?? 0) < 5 &&
+      !!(i.shop_image_webp || i.shop_image) &&  // must have a shop icon
+      !i.class_name.startsWith('upgrade_imbued') &&
+      !i.class_name.startsWith('item_projectile') &&
+      !i.class_name.startsWith('armor_upgrade') &&
+      !i.class_name.startsWith('weapon_upgrade') &&
+      !i.class_name.startsWith('tech_upgrade')
+    );
 
     if (slot !== 'all') {
       items = items.filter(i => i.item_slot_type === slot);
@@ -84,7 +94,14 @@ export class Items implements OnInit {
   getDescription(item: ItemInfo): string {
     const d = (item as any).description;
     if (!d) return '';
-    return d.desc || d.passive || d.active || '';
+    const raw = d.desc || d.passive || d.active || '';
+    // Strip all HTML tags (spans, SVGs, etc.) and clean up whitespace
+    return raw
+      .replace(/<svg[\s\S]*?<\/svg>/gi, '')  // remove SVG blocks entirely
+      .replace(/<[^>]+>/g, '')               // remove remaining HTML tags
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')                  // collapse whitespace
+      .trim();
   }
 
   getKeyProperties(item: ItemInfo): { name: string; value: string }[] {
