@@ -508,6 +508,38 @@
   flex-shrink: 0;
 }
 
+.props-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.3rem 0 0.1rem;
+
+  span {
+    font-size: 0.65rem;
+    color: rgba(255, 200, 50, 0.7);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 200, 50, 0.15);
+  }
+}
+
+.item-prop.conditional {
+  background: rgba(255, 200, 50, 0.04);
+  border-color: rgba(255, 200, 50, 0.12);
+
+  .prop-value {
+    color: #fbbf24;
+  }
+}
+
 // ─── Responsive ──────────────────────────────────────────────────────────────
 
 @media (max-width: 768px) {

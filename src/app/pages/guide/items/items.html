@@ -110,7 +110,7 @@
                 }
                 @if (getKeyProperties(item).length > 0) {
                   <div class="item-props">
-                    @for (prop of getKeyProperties(item); track prop.name) {
+                    @for (prop of getBaseProps(item); track prop.name) {
                       <div class="item-prop">
                         @if (prop.icon) {
                           <img [src]="prop.icon" [alt]="prop.name" class="prop-icon" />
@@ -118,6 +118,20 @@
                         <span class="prop-name">{{ prop.name }}</span>
                         <span class="prop-value">{{ prop.value }}</span>
                       </div>
+                    }
+                    @if (getConditionalProps(item).length > 0) {
+                      <div class="props-divider">
+                        <span>⚡ Conditional</span>
+                      </div>
+                      @for (prop of getConditionalProps(item); track prop.name) {
+                        <div class="item-prop conditional">
+                          @if (prop.icon) {
+                            <img [src]="prop.icon" [alt]="prop.name" class="prop-icon" />
+                          }
+                          <span class="prop-name">{{ prop.name }}</span>
+                          <span class="prop-value">{{ prop.value }}</span>
+                        </div>
+                      }
                     }
                   </div>
                 }

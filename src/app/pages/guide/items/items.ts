@@ -104,7 +104,7 @@ export class Items implements OnInit {
       .trim();
   }
 
-  getKeyProperties(item: ItemInfo): { name: string; value: string; icon?: string }[] {
+  getKeyProperties(item: ItemInfo): { name: string; value: string; icon?: string; conditional: boolean }[] {
     if (!item.properties) return [];
 
     // Skip these internal/technical properties that aren't meaningful to display
@@ -121,9 +121,7 @@ export class Items implements OnInit {
         if (skipKeys.has(key)) return false;
         const val = prop?.value;
         if (val == null || val === '' || val === '0' || val === 0) return false;
-        // Skip disable_value matches
         if (prop.disable_value != null && String(val) === String(prop.disable_value)) return false;
-        // Must have a label to be meaningful
         if (!prop.label) return false;
         return true;
       })
@@ -131,10 +129,13 @@ export class Items implements OnInit {
         const prefix = prop.prefix ? prop.prefix.replace('{s:sign}', '+') : '';
         const postfix = prop.postfix || '';
         const value = `${prefix}${prop.value}${postfix}`;
+        const usageFlags: string[] = Array.isArray(prop.usage_flags) ? prop.usage_flags : [];
+        const conditional = usageFlags.includes('ConditionallyApplied') || usageFlags.includes('ConditionallyEnemyApplied');
         return {
           name: prop.label || this.formatPropertyName(key),
           value,
-          icon: prop.icon
+          icon: prop.icon,
+          conditional
         };
       });
   }
@@ -159,6 +160,14 @@ export class Items implements OnInit {
     // Convert PascalCase/camelCase to readable
     const clean = key.replace(/^EAbilityAttribute_/, '').replace(/^m_/, '');
     return clean.replace(/([A-Z])/g, ' $1').trim();
+  }
+
+  getBaseProps(item: ItemInfo) {
+    return this.getKeyProperties(item).filter(p => !p.conditional);
+  }
+
+  getConditionalProps(item: ItemInfo) {
+    return this.getKeyProperties(item).filter(p => p.conditional);
   }
 
   getTierLabel(tier: number): string {
