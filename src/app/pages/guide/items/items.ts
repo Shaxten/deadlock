@@ -104,15 +104,39 @@ export class Items implements OnInit {
       .trim();
   }
 
-  getKeyProperties(item: ItemInfo): { name: string; value: string }[] {
+  getKeyProperties(item: ItemInfo): { name: string; value: string; icon?: string }[] {
     if (!item.properties) return [];
+
+    // Skip these internal/technical properties that aren't meaningful to display
+    const skipKeys = new Set([
+      'AbilityPostCastDuration', 'AbilityResourceCost', 'AbilityUnitTargetLimit',
+      'ChannelMoveSpeed', 'AbilityCastDelay', 'TickRate', 'BounceGrace',
+      'BounceLinger', 'NextTargetDuration', 'PriorityBounceRadius',
+      'ClimbHeight', 'PostExplosionDuration', 'PreExplosionDuration',
+      'BuffDelay', 'ExplosionInterval', 'MeleeHalfAngle', 'ExtraSweepRadius'
+    ]);
+
     return Object.entries(item.properties)
-      .filter(([, prop]: [string, any]) => prop?.value != null && prop.value !== 0 && prop.value !== '')
-      .slice(0, 4)
-      .map(([key, prop]: [string, any]) => ({
-        name: this.formatPropertyName(key),
-        value: String(prop.value)
-      }));
+      .filter(([key, prop]: [string, any]) => {
+        if (skipKeys.has(key)) return false;
+        const val = prop?.value;
+        if (val == null || val === '' || val === '0' || val === 0) return false;
+        // Skip disable_value matches
+        if (prop.disable_value != null && String(val) === String(prop.disable_value)) return false;
+        // Must have a label to be meaningful
+        if (!prop.label) return false;
+        return true;
+      })
+      .map(([key, prop]: [string, any]) => {
+        const prefix = prop.prefix ? prop.prefix.replace('{s:sign}', '+') : '';
+        const postfix = prop.postfix || '';
+        const value = `${prefix}${prop.value}${postfix}`;
+        return {
+          name: prop.label || this.formatPropertyName(key),
+          value,
+          icon: prop.icon
+        };
+      });
   }
 
   formatPropertyName(key: string): string {
