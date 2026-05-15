@@ -94,8 +94,18 @@ export interface ItemInfo {
   image_webp: string;
   shop_image_webp?: string;
   shop_image?: string;
+  shop_image_small_webp?: string;
   type: string;
   item_slot_type?: 'weapon' | 'spirit' | 'vitality';
+  item_tier?: number;
+  cost?: number;
+  shopable?: boolean;
+  description?: {
+    desc?: string;
+    passive?: string;
+    active?: string;
+  };
+  properties?: Record<string, { value: any; [key: string]: any }>;
 }
 
 export interface HeroCounterStats {

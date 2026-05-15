@@ -1,0 +1,128 @@
+<div class="items-page">
+  <!-- Hero Banner -->
+  <section class="items-hero">
+    <div class="hero-bg">
+      <div class="grid-overlay"></div>
+      <div class="gradient-orb orb-1"></div>
+      <div class="gradient-orb orb-2"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-label">
+        <span class="label-line"></span>
+        <span class="label-text">Game Knowledge</span>
+      </div>
+      <h1 class="hero-title">Items Guide</h1>
+      <p class="hero-subtitle">Browse all purchasable upgrades in Deadlock. Filter by slot type, tier, or search by name and stats.</p>
+    </div>
+  </section>
+
+  <!-- Controls -->
+  <section class="section section-controls">
+    <div class="container">
+      <!-- Search -->
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          class="search-input"
+          type="text"
+          placeholder="Search by name, stat, or description…"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          aria-label="Search items"
+        />
+        @if (searchQuery()) {
+          <button class="search-clear" (click)="searchQuery.set('')" aria-label="Clear search">✕</button>
+        }
+      </div>
+
+      <!-- Slot Filter -->
+      <div class="filter-row">
+        <div class="filter-group">
+          <span class="filter-label">Slot</span>
+          <div class="filter-tabs">
+            <button class="filter-tab" [class.active]="selectedSlot() === 'all'" (click)="setSlot('all')">All</button>
+            <button class="filter-tab weapon" [class.active]="selectedSlot() === 'weapon'" (click)="setSlot('weapon')">⚔️ Weapon</button>
+            <button class="filter-tab spirit" [class.active]="selectedSlot() === 'spirit'" (click)="setSlot('spirit')">✨ Spirit</button>
+            <button class="filter-tab vitality" [class.active]="selectedSlot() === 'vitality'" (click)="setSlot('vitality')">💚 Vitality</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Tier</span>
+          <div class="filter-tabs">
+            <button class="filter-tab" [class.active]="selectedTier() === 0" (click)="setTier(0)">All</button>
+            <button class="filter-tab tier-1" [class.active]="selectedTier() === 1" (click)="setTier(1)">T1</button>
+            <button class="filter-tab tier-2" [class.active]="selectedTier() === 2" (click)="setTier(2)">T2</button>
+            <button class="filter-tab tier-3" [class.active]="selectedTier() === 3" (click)="setTier(3)">T3</button>
+            <button class="filter-tab tier-4" [class.active]="selectedTier() === 4" (click)="setTier(4)">T4</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Count -->
+      @if (!loading()) {
+        <p class="item-count">Showing <strong>{{ filteredItems().length }}</strong> items</p>
+      }
+    </div>
+  </section>
+
+  <!-- Items Grid -->
+  <section class="section section-items">
+    <div class="container">
+      @if (loading()) {
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p>Loading items…</p>
+        </div>
+      } @else if (filteredItems().length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">🔎</span>
+          <p>No items match your filters.</p>
+          <button class="reset-btn" (click)="searchQuery.set(''); setSlot('all'); setTier(0)">Reset filters</button>
+        </div>
+      } @else {
+        <div class="items-grid">
+          @for (item of filteredItems(); track item.id) {
+            <div class="item-card" [class]="'slot-' + item.item_slot_type">
+              <div class="item-card-header">
+                @if (getItemImage(item)) {
+                  <img [src]="getItemImage(item)" [alt]="item.name" class="item-img" loading="lazy" />
+                } @else {
+                  <div class="item-img-placeholder">?</div>
+                }
+                <div class="item-badges">
+                  @if (item.item_tier) {
+                    <span class="tier-badge" [class]="'tier-' + item.item_tier">T{{ item.item_tier }}</span>
+                  }
+                  @if (item.item_slot_type) {
+                    <span class="slot-badge" [class]="'slot-badge-' + item.item_slot_type">{{ item.item_slot_type }}</span>
+                  }
+                </div>
+              </div>
+
+              <div class="item-card-body">
+                <h3 class="item-name">{{ item.name }}</h3>
+                @if (item.cost) {
+                  <div class="item-cost">💰 {{ item.cost | number }} souls</div>
+                }
+                @if (getDescription(item)) {
+                  <p class="item-desc">{{ getDescription(item) }}</p>
+                }
+                @if (getKeyProperties(item).length > 0) {
+                  <div class="item-props">
+                    @for (prop of getKeyProperties(item); track prop.name) {
+                      <div class="item-prop">
+                        <span class="prop-name">{{ prop.name }}</span>
+                        <span class="prop-value">{{ prop.value }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>
