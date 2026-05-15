@@ -181,7 +181,7 @@ export class MatchDetail implements OnInit {
       .filter(i => i.sold_time_s === 0 && i.item_id > 0)
       .map(i => itemMap.get(i.item_id))
       .filter((i): i is ItemInfo => !!i && i.type === 'upgrade')
-      .slice(0, 10);
+      .slice(0, 12);
   }
 
   getItemSlotClass(item: ItemInfo): string {

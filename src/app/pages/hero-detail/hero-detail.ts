@@ -47,7 +47,7 @@ export class HeroDetail implements OnInit {
     this.items()
       .filter(i => i.info)
       .sort((a, b) => b.matches - a.matches)
-      .slice(0, 10)
+      .slice(0, 12)
   );
 
   strongAgainst = computed(() =>
