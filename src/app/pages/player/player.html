@@ -72,6 +72,15 @@
             View Steam Profile
           </a>
         </div>
+        @if (currentRank()) {
+          <div class="profile-rank">
+            <img [src]="getRankImage()" [alt]="getRankLabel()" class="rank-badge-img" />
+            <div class="rank-info">
+              <span class="rank-name">{{ getRankLabel() }}</span>
+              <span class="rank-sub">Current Rank</span>
+            </div>
+          </div>
+        }
       </div>
     </section>
 

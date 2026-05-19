@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { PlayerService } from '../../services/player.service';
 import { HeroService } from '../../services/hero.service';
-import { SteamProfile, PlayerHeroStats, PlayerMatch, HeroInfo } from '../../models/hero.model';
+import { SteamProfile, PlayerHeroStats, PlayerMatch, HeroInfo, PlayerRank } from '../../models/hero.model';
 
 const STEAM_ID_64_BASE = BigInt('76561197960265728');
 
@@ -30,6 +30,7 @@ export class Player implements OnInit {
   heroStats = signal<PlayerHeroStats[]>([]);
   matchHistory = signal<PlayerMatch[]>([]);
   heroes = signal<HeroInfo[]>([]);
+  currentRank = signal<PlayerRank | null>(null);
 
   heroMap = computed(() => {
     const map = new Map<number, HeroInfo>();
@@ -180,12 +181,20 @@ export class Player implements OnInit {
     forkJoin({
       profile: this.playerService.getSteamProfile(accountId),
       heroStats: this.playerService.getPlayerHeroStats(accountId),
-      matchHistory: this.playerService.getPlayerMatchHistory(accountId)
+      matchHistory: this.playerService.getPlayerMatchHistory(accountId),
+      mmr: this.playerService.getMmrHistory(accountId)
     }).subscribe({
-      next: ({ profile, heroStats, matchHistory }) => {
+      next: ({ profile, heroStats, matchHistory, mmr }) => {
         this.profile.set(profile?.length ? profile[0] : null);
         this.heroStats.set(heroStats || []);
         this.matchHistory.set((matchHistory || []).slice(0, 20));
+        // Get the most recent rank entry
+        if (mmr && mmr.length > 0) {
+          const sorted = [...mmr].sort((a, b) => b.start_time - a.start_time);
+          this.currentRank.set(sorted[0]);
+        } else {
+          this.currentRank.set(null);
+        }
         this.loading.set(false);
 
         if (!profile?.length) {
@@ -235,5 +244,23 @@ export class Player implements OnInit {
 
   isWin(match: PlayerMatch): boolean {
     return match.player_team === match.match_result;
+  }
+
+  getRankName(): string {
+    const r = this.currentRank();
+    if (!r) return '';
+    return this.playerService.getRankName(r.division);
+  }
+
+  getRankImage(): string {
+    const r = this.currentRank();
+    if (!r) return '';
+    return this.playerService.getRankImageUrl(r.division, r.division_tier);
+  }
+
+  getRankLabel(): string {
+    const r = this.currentRank();
+    if (!r) return '';
+    return `${this.playerService.getRankName(r.division)} ${r.division_tier}`;
   }
 }

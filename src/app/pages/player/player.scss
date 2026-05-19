@@ -268,6 +268,45 @@
   padding: 1.5rem 2rem;
 }
 
+.profile-rank {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.rank-badge-img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.rank-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.rank-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.rank-sub {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .profile-avatar {
   width: 80px;
   height: 80px;

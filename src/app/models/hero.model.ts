@@ -149,6 +149,16 @@ export interface SteamProfile {
   profileurl: string;
 }
 
+export interface PlayerRank {
+  account_id: number;
+  match_id: number;
+  start_time: number;
+  player_score: number;
+  rank: number;
+  division: number;
+  division_tier: number;
+}
+
 export interface PlayerHeroStats {
   account_id: number;
   hero_id: number;
