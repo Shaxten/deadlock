@@ -31,6 +31,12 @@ export class PlayerService {
     return this.http.get<PlayerRank[]>(`${this.apiUrl}/players/${accountId}/mmr-history`);
   }
 
+  getBatchMmr(accountIds: number[]): Observable<PlayerRank[]> {
+    return this.http.get<PlayerRank[]>(`${this.apiUrl}/players/mmr`, {
+      params: { account_ids: accountIds.join(',') }
+    });
+  }
+
   getSteamProfile(accountId: number): Observable<SteamProfile[]> {
     return this.http.get<SteamProfile[]>(`${this.apiUrl}/players/steam`, {
       params: { account_ids: accountId.toString() }

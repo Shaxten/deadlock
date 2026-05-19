@@ -5,7 +5,7 @@ import { forkJoin } from 'rxjs';
 import { MatchService, PerformanceCurvePoint } from '../../services/match.service';
 import { HeroService } from '../../services/hero.service';
 import { PlayerService } from '../../services/player.service';
-import { MatchMetadata, MatchPlayer, HeroInfo, SteamProfile, ItemInfo } from '../../models/hero.model';
+import { MatchMetadata, MatchPlayer, HeroInfo, SteamProfile, ItemInfo, PlayerRank } from '../../models/hero.model';
 
 @Component({
   selector: 'app-match-detail',
@@ -26,6 +26,7 @@ export class MatchDetail implements OnInit {
   heroes = signal<HeroInfo[]>([]);
   allItems = signal<Map<number, ItemInfo>>(new Map());
   playerProfiles = signal<Map<number, SteamProfile>>(new Map());
+  playerRanks = signal<Map<number, PlayerRank>>(new Map());
   selectedPlayer = signal<MatchPlayer | null>(null);
   performanceCurve = signal<PerformanceCurvePoint[]>([]);
   sourcePlayerId = signal<string | null>(null);
@@ -91,6 +92,14 @@ export class MatchDetail implements OnInit {
               this.playerProfiles.set(map);
             }
           });
+
+          this.playerService.getBatchMmr(accountIds).subscribe({
+            next: (ranks) => {
+              const map = new Map<number, PlayerRank>();
+              ranks.forEach(r => map.set(r.account_id, r));
+              this.playerRanks.set(map);
+            }
+          });
         }
 
         // Auto-select the highlighted player
@@ -132,6 +141,18 @@ export class MatchDetail implements OnInit {
 
   getPlayerAvatar(accountId: number): string {
     return this.playerProfiles().get(accountId)?.avatarmedium || '';
+  }
+
+  getPlayerRankImage(accountId: number): string {
+    const rank = this.playerRanks().get(accountId);
+    if (!rank) return '';
+    return this.playerService.getRankImageUrl(rank.division, rank.division_tier);
+  }
+
+  getPlayerRankLabel(accountId: number): string {
+    const rank = this.playerRanks().get(accountId);
+    if (!rank) return '';
+    return `${this.playerService.getRankName(rank.division)} ${rank.division_tier}`;
   }
 
   getHeroName(heroId: number): string {

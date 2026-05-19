@@ -53,6 +53,9 @@
                 <div class="player-info">
                   <span class="player-name">{{ getPlayerName(player.account_id) }}</span>
                   <span class="player-hero-label">{{ getHeroName(player.hero_id) }}</span>
+                  @if (getPlayerRankImage(player.account_id)) {
+                    <img [src]="getPlayerRankImage(player.account_id)" [alt]="getPlayerRankLabel(player.account_id)" class="player-rank-img" [title]="getPlayerRankLabel(player.account_id)" />
+                  }
                 </div>
                 <div class="player-stats">
                   <span class="player-kda">{{ player.kills }}/{{ player.deaths }}/{{ player.assists }}</span>
@@ -99,6 +102,9 @@
                 <div class="player-info">
                   <span class="player-name">{{ getPlayerName(player.account_id) }}</span>
                   <span class="player-hero-label">{{ getHeroName(player.hero_id) }}</span>
+                  @if (getPlayerRankImage(player.account_id)) {
+                    <img [src]="getPlayerRankImage(player.account_id)" [alt]="getPlayerRankLabel(player.account_id)" class="player-rank-img" [title]="getPlayerRankLabel(player.account_id)" />
+                  }
                 </div>
                 <div class="player-stats">
                   <span class="player-kda">{{ player.kills }}/{{ player.deaths }}/{{ player.assists }}</span>
@@ -271,4 +277,5 @@
     }
   }
 </div>
+
 

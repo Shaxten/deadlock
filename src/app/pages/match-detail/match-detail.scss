@@ -264,6 +264,13 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
+.player-rank-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
 .player-stats {
   display: flex;
   flex-direction: column;
