@@ -456,6 +456,20 @@
   gap: 0.4rem;
 }
 
+.profile-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.profile-id {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
 .profile-name {
   font-family: var(--font-display);
   font-size: 1.5rem;

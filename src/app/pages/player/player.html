@@ -102,7 +102,10 @@
       <div class="profile-card">
         <img [src]="p.avatarfull" [alt]="p.personaname" class="profile-avatar" />
         <div class="profile-info">
-          <h2 class="profile-name">{{ p.personaname }}</h2>
+          <div class="profile-name-row">
+            <h2 class="profile-name">{{ p.personaname }}</h2>
+            <span class="profile-id">ID: {{ p.account_id }}</span>
+          </div>
           <a [href]="p.profileurl" target="_blank" rel="noopener" class="profile-link">
             View Steam Profile
           </a>
