@@ -53,6 +53,15 @@ export class MatchDetail implements OnInit {
     return this.matchData()?.match_info?.winning_team ?? -1;
   });
 
+  // Rank players 1-12 by net worth across both teams
+  playerNetWorthRanks = computed(() => {
+    const players = this.matchData()?.players || [];
+    const sorted = [...players].sort((a, b) => b.net_worth - a.net_worth);
+    const ranks = new Map<number, number>();
+    sorted.forEach((p, i) => ranks.set(p.account_id, i + 1));
+    return ranks;
+  });
+
   ngOnInit(): void {
     const matchId = Number(this.route.snapshot.paramMap.get('id'));
     const playerParam = this.route.snapshot.queryParamMap.get('player');
@@ -153,6 +162,10 @@ export class MatchDetail implements OnInit {
     const rank = this.playerRanks().get(accountId);
     if (!rank) return '';
     return `${this.playerService.getRankName(rank.division)} ${rank.division_tier}`;
+  }
+
+  getPlayerMatchRank(accountId: number): number {
+    return this.playerNetWorthRanks().get(accountId) ?? 0;
   }
 
   getHeroName(heroId: number): string {

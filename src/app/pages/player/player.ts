@@ -33,6 +33,20 @@ export class Player implements OnInit {
   matchHistory = signal<PlayerMatch[]>([]);
   heroes = signal<HeroInfo[]>([]);
   currentRank = signal<PlayerRank | null>(null);
+  mmrHistory = signal<PlayerRank[]>([]);
+
+  avgRank = computed(() => {
+    const history = this.mmrHistory();
+    if (history.length === 0) return null;
+    // Use last 20 entries for average
+    const recent = [...history].sort((a, b) => b.start_time - a.start_time).slice(0, 20);
+    const avgDivision = recent.reduce((sum, r) => sum + r.division, 0) / recent.length;
+    const avgTier = recent.reduce((sum, r) => sum + r.division_tier, 0) / recent.length;
+    return {
+      division: Math.round(avgDivision),
+      division_tier: Math.round(avgTier)
+    };
+  });
 
   heroMap = computed(() => {
     const map = new Map<number, HeroInfo>();
@@ -194,8 +208,10 @@ export class Player implements OnInit {
         if (mmr && mmr.length > 0) {
           const sorted = [...mmr].sort((a, b) => b.start_time - a.start_time);
           this.currentRank.set(sorted[0]);
+          this.mmrHistory.set(mmr);
         } else {
           this.currentRank.set(null);
+          this.mmrHistory.set([]);
         }
         this.loading.set(false);
 
@@ -271,6 +287,18 @@ export class Player implements OnInit {
 
   getRankLabel(): string {
     const r = this.currentRank();
+    if (!r) return '';
+    return `${this.playerService.getRankName(r.division)} ${r.division_tier}`;
+  }
+
+  getAvgRankImage(): string {
+    const r = this.avgRank();
+    if (!r) return '';
+    return this.playerService.getRankImageUrl(r.division, r.division_tier);
+  }
+
+  getAvgRankLabel(): string {
+    const r = this.avgRank();
     if (!r) return '';
     return `${this.playerService.getRankName(r.division)} ${r.division_tier}`;
   }

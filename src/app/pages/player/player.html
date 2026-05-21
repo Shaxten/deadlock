@@ -119,6 +119,15 @@
             </div>
           </div>
         }
+        @if (avgRank() && getAvgRankLabel() !== getRankLabel()) {
+          <div class="profile-rank avg-rank">
+            <img [src]="getAvgRankImage()" [alt]="getAvgRankLabel()" class="rank-badge-img rank-badge-sm" />
+            <div class="rank-info">
+              <span class="rank-name">{{ getAvgRankLabel() }}</span>
+              <span class="rank-sub">Avg (last 20)</span>
+            </div>
+          </div>
+        }
         <button class="fav-btn" [class.active]="isFavorite()" (click)="toggleFavorite()" [title]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'">
           {{ isFavorite() ? '★' : '☆' }}
         </button>

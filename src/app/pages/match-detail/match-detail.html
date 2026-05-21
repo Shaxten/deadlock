@@ -56,6 +56,9 @@
                   @if (getPlayerRankImage(player.account_id)) {
                     <img [src]="getPlayerRankImage(player.account_id)" [alt]="getPlayerRankLabel(player.account_id)" class="player-rank-img" [title]="getPlayerRankLabel(player.account_id)" />
                   }
+                  @if (getPlayerMatchRank(player.account_id) > 0) {
+                    <span class="player-match-rank" [class.top3]="getPlayerMatchRank(player.account_id) <= 3">#{{ getPlayerMatchRank(player.account_id) }}</span>
+                  }
                 </div>
                 <div class="player-stats">
                   <span class="player-kda">{{ player.kills }}/{{ player.deaths }}/{{ player.assists }}</span>
@@ -104,6 +107,9 @@
                   <span class="player-hero-label">{{ getHeroName(player.hero_id) }}</span>
                   @if (getPlayerRankImage(player.account_id)) {
                     <img [src]="getPlayerRankImage(player.account_id)" [alt]="getPlayerRankLabel(player.account_id)" class="player-rank-img" [title]="getPlayerRankLabel(player.account_id)" />
+                  }
+                  @if (getPlayerMatchRank(player.account_id) > 0) {
+                    <span class="player-match-rank" [class.top3]="getPlayerMatchRank(player.account_id) <= 3">#{{ getPlayerMatchRank(player.account_id) }}</span>
                   }
                 </div>
                 <div class="player-stats">
@@ -280,5 +286,6 @@
     }
   }
 </div>
+
 
 
