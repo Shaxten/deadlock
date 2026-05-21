@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { PlayerService } from '../../services/player.service';
 import { HeroService } from '../../services/hero.service';
+import { MatchService } from '../../services/match.service';
 import { FavoritesService } from '../../services/favorites.service';
 import { SteamProfile, PlayerHeroStats, PlayerMatch, HeroInfo, PlayerRank } from '../../models/hero.model';
 
@@ -20,6 +21,7 @@ const STEAM_ID_64_BASE = BigInt('76561197960265728');
 export class Player implements OnInit {
   private playerService = inject(PlayerService);
   private heroService = inject(HeroService);
+  private matchService = inject(MatchService);
   private route = inject(ActivatedRoute);
   readonly favoritesService = inject(FavoritesService);
 
@@ -34,19 +36,7 @@ export class Player implements OnInit {
   heroes = signal<HeroInfo[]>([]);
   currentRank = signal<PlayerRank | null>(null);
   mmrHistory = signal<PlayerRank[]>([]);
-
-  avgRank = computed(() => {
-    const history = this.mmrHistory();
-    if (history.length === 0) return null;
-    // Use last 20 entries for average
-    const recent = [...history].sort((a, b) => b.start_time - a.start_time).slice(0, 20);
-    const avgDivision = recent.reduce((sum, r) => sum + r.division, 0) / recent.length;
-    const avgTier = recent.reduce((sum, r) => sum + r.division_tier, 0) / recent.length;
-    return {
-      division: Math.round(avgDivision),
-      division_tier: Math.round(avgTier)
-    };
-  });
+  avgPlacement = signal<number | null>(null);
 
   heroMap = computed(() => {
     const map = new Map<number, HeroInfo>();
@@ -226,6 +216,30 @@ export class Player implements OnInit {
             avatarmedium: p.avatarmedium,
             addedAt: 0
           });
+
+          // Compute average placement from last 5 matches
+          const recentMatches = (matchHistory || []).slice(0, 5);
+          if (recentMatches.length > 0) {
+            const metaRequests = recentMatches.map(m => this.matchService.getMatchMetadata(m.match_id));
+            forkJoin(metaRequests).subscribe({
+              next: (metas) => {
+                const placements: number[] = [];
+                metas.forEach((meta, i) => {
+                  const playerAccountId = recentMatches[i].account_id;
+                  const players = meta.players || [];
+                  if (players.length === 0) return;
+                  const sorted = [...players].sort((a, b) => b.net_worth - a.net_worth);
+                  const rank = sorted.findIndex(p => p.account_id === playerAccountId) + 1;
+                  if (rank > 0) placements.push(rank);
+                });
+                if (placements.length > 0) {
+                  const avg = placements.reduce((s, r) => s + r, 0) / placements.length;
+                  this.avgPlacement.set(Math.round(avg * 10) / 10);
+                }
+              },
+              error: () => {} // Silently fail
+            });
+          }
         }
       },
       error: () => {
@@ -291,17 +305,8 @@ export class Player implements OnInit {
     return `${this.playerService.getRankName(r.division)} ${r.division_tier}`;
   }
 
-  getAvgRankImage(): string {
-    const r = this.avgRank();
-    if (!r) return '';
-    return this.playerService.getRankImageUrl(r.division, r.division_tier);
-  }
-
-  getAvgRankLabel(): string {
-    const r = this.avgRank();
-    if (!r) return '';
-    return `${this.playerService.getRankName(r.division)} ${r.division_tier}`;
-  }
+  getAvgRankImage(): string { return ''; }
+  getAvgRankLabel(): string { return ''; }
 
   toggleFavorite(): void {
     const p = this.profile();

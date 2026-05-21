@@ -119,12 +119,12 @@
             </div>
           </div>
         }
-        @if (avgRank() && getAvgRankLabel() !== getRankLabel()) {
+        @if (avgPlacement() !== null) {
           <div class="profile-rank avg-rank">
-            <img [src]="getAvgRankImage()" [alt]="getAvgRankLabel()" class="rank-badge-img rank-badge-sm" />
+            <span class="avg-placement-num">#{{ avgPlacement() }}</span>
             <div class="rank-info">
-              <span class="rank-name">{{ getAvgRankLabel() }}</span>
-              <span class="rank-sub">Avg (last 20)</span>
+              <span class="rank-name">Avg Placement</span>
+              <span class="rank-sub">Last 5 matches</span>
             </div>
           </div>
         }
