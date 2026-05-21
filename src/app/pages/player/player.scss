@@ -415,6 +415,76 @@
   border-radius: 12px;
 }
 
+.rank-tooltip-wrapper {
+  position: relative;
+  cursor: help;
+
+  &:hover .rank-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+}
+
+.rank-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  width: 280px;
+  background: var(--color-dark, #060608);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 200;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 1.5rem;
+    border: 7px solid transparent;
+    border-top-color: var(--color-dark, #060608);
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.5;
+    margin: 0.5rem 0 0;
+
+    strong {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+.rank-tooltip-title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+
+.rank-tooltip-formula {
+  margin-top: 0.75rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  background: rgba(0, 212, 170, 0.08);
+  border: 1px solid rgba(0, 212, 170, 0.2);
+  border-radius: 6px;
+  padding: 0.35rem 0.6rem;
+  text-align: center;
+}
+
 .rank-badge-img {
   width: 56px;
   height: 56px;

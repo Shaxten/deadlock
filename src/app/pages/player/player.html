@@ -111,11 +111,17 @@
           </a>
         </div>
         @if (currentRank()) {
-          <div class="profile-rank">
+          <div class="profile-rank rank-tooltip-wrapper">
             <img [src]="getRankImage()" [alt]="getRankLabel()" class="rank-badge-img" />
             <div class="rank-info">
               <span class="rank-name">{{ getRankLabel() }}</span>
               <span class="rank-sub">Current Rank</span>
+            </div>
+            <div class="rank-tooltip">
+              <div class="rank-tooltip-title">How is this rank calculated?</div>
+              <p>This is an <strong>API estimate</strong>, not Valve's hidden MMR. It uses an Exponential Moving Average (EMA) of the last 50 matches, based on the average badge level of your lobbies.</p>
+              <p>If you consistently play in Phantom lobbies, your rank will be Phantom. One high-rank game can temporarily push it up — the EMA smooths it over time.</p>
+              <div class="rank-tooltip-formula">rank = division × 10 + tier</div>
             </div>
           </div>
         }
