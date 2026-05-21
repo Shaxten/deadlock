@@ -146,7 +146,10 @@
                 <img [src]="getPlayerAvatar(sp.account_id)" class="detail-avatar" alt="" />
               }
               <div class="detail-header-info">
-                <span class="detail-player-name">{{ getPlayerName(sp.account_id) }}</span>
+                <div class="detail-name-row">
+                  <span class="detail-player-name">{{ getPlayerName(sp.account_id) }}</span>
+                  <span class="detail-account-id">ID: {{ sp.account_id }}</span>
+                </div>
                 <div class="detail-hero-row">
                   @if (getHeroImage(sp.hero_id)) {
                     <img [src]="getHeroImage(sp.hero_id)" class="detail-hero-icon" alt="" />
