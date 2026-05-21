@@ -714,6 +714,56 @@
   }
 }
 
+// Right column wrapper
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+// Scrollable match list
+.match-list-scroll {
+  height: 400px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+  &::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+  @media (max-width: 900px) {
+    height: auto;
+    max-height: 400px;
+  }
+}
+
+// Insights column (below matches in right column)
+.insights-column {
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    padding-left: 1rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--color-secondary);
+      border-radius: 2px;
+    }
+  }
+}
+
 // Performance Insights
 .section-performance {
   background: var(--color-light);
