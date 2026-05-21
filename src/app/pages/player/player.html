@@ -231,7 +231,9 @@
                     <h4 class="subsection-title">Low Performance Matches</h4>
                     <div class="low-perf-list">
                       @for (entry of lowPerformanceMatches(); track entry.match.match_id) {
-                        <div class="low-perf-row">
+                        <a class="low-perf-row"
+                           [routerLink]="'/match/' + entry.match.match_id"
+                           [queryParams]="{ player: entry.match.account_id }">
                           <div class="low-perf-hero">
                             @if (getHeroImage(entry.match.hero_id)) {
                               <img [src]="getHeroImage(entry.match.hero_id)" [alt]="getHeroName(entry.match.hero_id)" class="low-perf-hero-img" />
@@ -258,7 +260,7 @@
                               <span class="flag-badge deaths-flag">High Deaths</span>
                             }
                           </div>
-                        </div>
+                        </a>
                       }
                     </div>
                   } @else {

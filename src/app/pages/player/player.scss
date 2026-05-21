@@ -826,10 +826,15 @@
   align-items: center;
   gap: 1rem;
   animation: slideIn 0.3s ease-out both;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 
   &:hover {
-    background: rgba(255, 70, 85, 0.1);
+    background: rgba(255, 70, 85, 0.12);
+    border-color: rgba(255, 70, 85, 0.35);
+    transform: translateX(3px);
   }
 }
 
