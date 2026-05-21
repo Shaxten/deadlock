@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { PlayerService } from '../../services/player.service';
 import { HeroService } from '../../services/hero.service';
+import { FavoritesService } from '../../services/favorites.service';
 import { SteamProfile, PlayerHeroStats, PlayerMatch, HeroInfo, PlayerRank } from '../../models/hero.model';
 
 const STEAM_ID_64_BASE = BigInt('76561197960265728');
@@ -20,6 +21,7 @@ export class Player implements OnInit {
   private playerService = inject(PlayerService);
   private heroService = inject(HeroService);
   private route = inject(ActivatedRoute);
+  readonly favoritesService = inject(FavoritesService);
 
   searchInput = '';
   loading = signal(false);
@@ -262,5 +264,21 @@ export class Player implements OnInit {
     const r = this.currentRank();
     if (!r) return '';
     return `${this.playerService.getRankName(r.division)} ${r.division_tier}`;
+  }
+
+  toggleFavorite(): void {
+    const p = this.profile();
+    if (!p) return;
+    this.favoritesService.toggle({
+      account_id: p.account_id,
+      personaname: p.personaname,
+      avatarmedium: p.avatarmedium,
+      addedAt: 0
+    });
+  }
+
+  isFavorite(): boolean {
+    const p = this.profile();
+    return p ? this.favoritesService.isFavorite(p.account_id) : false;
   }
 }

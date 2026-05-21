@@ -22,6 +22,22 @@
           }
         </button>
       </div>
+
+      <!-- Favorites -->
+      @if (favoritesService.favorites().length > 0) {
+        <div class="favorites-list">
+          <span class="favorites-label">★ Favorites</span>
+          <div class="favorites-chips">
+            @for (fav of favoritesService.favorites(); track fav.account_id) {
+              <button class="fav-chip" (click)="searchInput = fav.account_id.toString(); search()">
+                <img [src]="fav.avatarmedium" [alt]="fav.personaname" class="fav-chip-avatar" />
+                <span class="fav-chip-name">{{ fav.personaname }}</span>
+                <span class="fav-chip-remove" (click)="$event.stopPropagation(); favoritesService.remove(fav.account_id)" title="Remove">✕</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
     </div>
   </section>
 
@@ -81,6 +97,9 @@
             </div>
           </div>
         }
+        <button class="fav-btn" [class.active]="isFavorite()" (click)="toggleFavorite()" [title]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'">
+          {{ isFavorite() ? '★' : '☆' }}
+        </button>
       </div>
     </section>
 
