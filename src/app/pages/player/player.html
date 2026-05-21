@@ -38,6 +38,25 @@
           </div>
         </div>
       }
+
+      <!-- Recent Searches -->
+      @if (favoritesService.recents().length > 0) {
+        <div class="favorites-list">
+          <div class="recents-header">
+            <span class="favorites-label recents-label">🕐 Recent</span>
+            <button class="clear-recents-btn" (click)="favoritesService.clearRecents()">Clear</button>
+          </div>
+          <div class="favorites-chips">
+            @for (recent of favoritesService.recents(); track recent.account_id) {
+              <button class="fav-chip recent-chip" (click)="searchInput = recent.account_id.toString(); search()">
+                <img [src]="recent.avatarmedium" [alt]="recent.personaname" class="fav-chip-avatar" />
+                <span class="fav-chip-name">{{ recent.personaname }}</span>
+                <span class="fav-chip-remove" (click)="$event.stopPropagation(); favoritesService.removeRecent(recent.account_id)" title="Remove">✕</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
     </div>
   </section>
 

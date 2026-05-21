@@ -201,6 +201,15 @@ export class Player implements OnInit {
 
         if (!profile?.length) {
           this.error.set('Player not found. They may not have played Deadlock.');
+        } else {
+          // Save to recent searches
+          const p = profile[0];
+          this.favoritesService.addRecent({
+            account_id: p.account_id,
+            personaname: p.personaname,
+            avatarmedium: p.avatarmedium,
+            addedAt: 0
+          });
         }
       },
       error: () => {
