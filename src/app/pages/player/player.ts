@@ -217,7 +217,7 @@ export class Player implements OnInit {
             addedAt: 0
           });
 
-          // Compute average placement from last 5 matches
+          // Compute average placement from last 5 matches using composite score
           const recentMatches = (matchHistory || []).slice(0, 5);
           if (recentMatches.length > 0) {
             const metaRequests = recentMatches.map(m => this.matchService.getMatchMetadata(m.match_id));
@@ -228,7 +228,24 @@ export class Player implements OnInit {
                   const playerAccountId = recentMatches[i].account_id;
                   const players = meta.players || [];
                   if (players.length === 0) return;
-                  const sorted = [...players].sort((a, b) => b.net_worth - a.net_worth);
+
+                  const avg = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / Math.max(arr.length, 1);
+                  const avgs = {
+                    nw: avg(players.map(p => p.net_worth)),
+                    dmg: avg(players.map(p => p.player_damage)),
+                    kills: avg(players.map(p => p.kills)),
+                    assists: avg(players.map(p => p.assists)),
+                    heal: avg(players.map(p => p.player_healing))
+                  };
+                  const norm = (val: number, a: number) => a > 0 ? val / a : 0;
+                  const score = (p: typeof players[0]) =>
+                    norm(p.net_worth, avgs.nw) * 0.40 +
+                    norm(p.player_damage, avgs.dmg) * 0.30 +
+                    norm(p.kills, avgs.kills) * 0.15 +
+                    norm(p.assists, avgs.assists) * 0.10 +
+                    norm(p.player_healing, avgs.heal) * 0.05;
+
+                  const sorted = [...players].sort((a, b) => score(b) - score(a));
                   const rank = sorted.findIndex(p => p.account_id === playerAccountId) + 1;
                   if (rank > 0) placements.push(rank);
                 });
@@ -237,7 +254,7 @@ export class Player implements OnInit {
                   this.avgPlacement.set(Math.round(avg * 10) / 10);
                 }
               },
-              error: () => {} // Silently fail
+              error: () => {}
             });
           }
         }

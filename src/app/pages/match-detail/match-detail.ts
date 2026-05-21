@@ -53,12 +53,37 @@ export class MatchDetail implements OnInit {
     return this.matchData()?.match_info?.winning_team ?? -1;
   });
 
-  // Rank players 1-12 by net worth across both teams
+  // Composite performance score: normalized net_worth (40%) + damage (30%) + kills (15%) + assists (10%) + healing (5%)
+  private compositeScore(p: { net_worth: number; player_damage: number; kills: number; deaths: number; assists: number; player_healing: number }, avgs: { nw: number; dmg: number; kills: number; assists: number; heal: number }): number {
+    const norm = (val: number, avg: number) => avg > 0 ? val / avg : 0;
+    return (
+      norm(p.net_worth, avgs.nw) * 0.40 +
+      norm(p.player_damage, avgs.dmg) * 0.30 +
+      norm(p.kills, avgs.kills) * 0.15 +
+      norm(p.assists, avgs.assists) * 0.10 +
+      norm(p.player_healing, avgs.heal) * 0.05
+    );
+  }
+
+  // Rank players 1-12 by composite score across both teams
   playerNetWorthRanks = computed(() => {
     const players = this.matchData()?.players || [];
-    const sorted = [...players].sort((a, b) => b.net_worth - a.net_worth);
+    if (players.length === 0) return new Map<number, number>();
+
+    const avg = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / Math.max(arr.length, 1);
+    const avgs = {
+      nw: avg(players.map(p => p.net_worth)),
+      dmg: avg(players.map(p => p.player_damage)),
+      kills: avg(players.map(p => p.kills)),
+      assists: avg(players.map(p => p.assists)),
+      heal: avg(players.map(p => p.player_healing))
+    };
+
+    const scored = players.map(p => ({ account_id: p.account_id, score: this.compositeScore(p, avgs) }));
+    scored.sort((a, b) => b.score - a.score);
+
     const ranks = new Map<number, number>();
-    sorted.forEach((p, i) => ranks.set(p.account_id, i + 1));
+    scored.forEach((p, i) => ranks.set(p.account_id, i + 1));
     return ranks;
   });
 
