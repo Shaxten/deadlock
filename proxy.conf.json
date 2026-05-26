@@ -1,0 +1,23 @@
+{
+  "/proxy/api": {
+    "target": "https://api.deadlock-api.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/proxy/api": "" },
+    "logLevel": "warn"
+  },
+  "/proxy/assets": {
+    "target": "https://assets.deadlock-api.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/proxy/assets": "" },
+    "logLevel": "warn"
+  },
+  "/proxy/bucket": {
+    "target": "https://assets-bucket.deadlock-api.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": { "^/proxy/bucket": "" },
+    "logLevel": "warn"
+  }
+}

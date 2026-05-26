@@ -2,13 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { HeroStats, HeroInfo, TierHero, Tier, RankInfo, RankFilter, ItemStats, ItemInfo, HeroCounterStats, HeroBuild } from '../models/hero.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class HeroService {
   private http = inject(HttpClient);
-  private statsUrl = 'https://api.deadlock-api.com/v1/analytics/hero-stats';
-  private assetsUrl = 'https://assets.deadlock-api.com/v2/heroes';
-  private ranksUrl = 'https://assets.deadlock-api.com/v2/ranks';
+  private statsUrl  = environment.apiBase    + '/v1/analytics/hero-stats';
+  private assetsUrl = environment.assetsBase + '/v2/heroes';
+  private ranksUrl  = environment.assetsBase + '/v2/ranks';
 
   readonly rankFilters: RankFilter[] = [
     { label: 'All', minBadge: 0, maxBadge: 116 },
@@ -106,17 +107,17 @@ export class HeroService {
   }
 
   getItemStats(heroId: number): Observable<ItemStats[]> {
-    return this.http.get<ItemStats[]>('https://api.deadlock-api.com/v1/analytics/item-stats', {
+    return this.http.get<ItemStats[]>(environment.apiBase + '/v1/analytics/item-stats', {
       params: { hero_id: heroId.toString() }
     });
   }
 
   getItems(): Observable<ItemInfo[]> {
-    return this.http.get<ItemInfo[]>('https://assets.deadlock-api.com/v2/items');
+    return this.http.get<ItemInfo[]>(environment.assetsBase + '/v2/items');
   }
 
   getHeroCounters(heroId: number): Observable<HeroCounterStats[]> {
-    return this.http.get<HeroCounterStats[]>('https://api.deadlock-api.com/v1/analytics/hero-counter-stats', {
+    return this.http.get<HeroCounterStats[]>(environment.apiBase + '/v1/analytics/hero-counter-stats', {
       params: { include_hero_ids: heroId.toString() }
     });
   }
@@ -129,6 +130,6 @@ export class HeroService {
       only_latest: 'true'
     };
     if (language) params.build_language = language;
-    return this.http.get<HeroBuild[]>('https://api.deadlock-api.com/v1/builds', { params });
+    return this.http.get<HeroBuild[]>(environment.apiBase + '/v1/builds', { params });
   }
 }

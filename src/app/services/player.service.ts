@@ -2,11 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SteamProfile, PlayerHeroStats, PlayerMatch, PlayerRank } from '../models/hero.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PlayerService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://api.deadlock-api.com/v1';
+  private apiUrl = environment.apiBase + '/v1';
+  private bucketBase = environment.bucketBase;
 
   // Rank names indexed by division (0-11)
   readonly rankNames = [
@@ -18,9 +20,9 @@ export class PlayerService {
   getRankImageUrl(division: number, subrank?: number): string {
     const tier = Math.max(0, Math.min(division, 11));
     if (subrank && subrank >= 1 && subrank <= 6) {
-      return `https://assets-bucket.deadlock-api.com/assets-api-res/images/ranks/rank${tier}/badge_sm_subrank${subrank}.webp`;
+      return `${this.bucketBase}/assets-api-res/images/ranks/rank${tier}/badge_sm_subrank${subrank}.webp`;
     }
-    return `https://assets-bucket.deadlock-api.com/assets-api-res/images/ranks/rank${tier}/badge_sm.webp`;
+    return `${this.bucketBase}/assets-api-res/images/ranks/rank${tier}/badge_sm.webp`;
   }
 
   getRankName(division: number): string {

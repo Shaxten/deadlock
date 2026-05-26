@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { MatchMetadata, MatchPlayer, PlayerStatSnapshot, PlayerItemPurchase, DeathDetail } from '../models/hero.model';
+import { environment } from '../../environments/environment';
 
 export interface PerformanceCurvePoint {
   game_time: number;
@@ -11,7 +12,7 @@ export interface PerformanceCurvePoint {
 @Injectable({ providedIn: 'root' })
 export class MatchService {
   private http = inject(HttpClient);
-  private apiUrl = 'https://api.deadlock-api.com/v1';
+  private apiUrl = environment.apiBase + '/v1';
 
   getPerformanceCurve(heroId: number, minBadge?: number, maxBadge?: number): Observable<PerformanceCurvePoint[]> {
     const params: any = {
